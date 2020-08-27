@@ -17,6 +17,8 @@ class _QuestionsState extends State<Questions> {
   final TextEditingController _phoneControl = new TextEditingController();
   final TextEditingController _nameControl = new TextEditingController();
   final TextEditingController _emailControl = new TextEditingController();
+  
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   Map profile = {};
   Map business = {};
   Map user = {};
@@ -63,7 +65,7 @@ class _QuestionsState extends State<Questions> {
               new FlatButton(
                   child: const Text('Scan'),
                   onPressed: () {
-                    _scan();
+                    // _scan();
                     Navigator.pop(context);
                   })
             ],
@@ -78,22 +80,19 @@ class _QuestionsState extends State<Questions> {
         print('connected');
       }
     } on SocketException catch (_) {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Network"),
-              content: Text("You are not connected to the internet."),
-              actions: <Widget>[
-                new FlatButton(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    })
-              ],
-            );
-          });
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 5),
+        content: Container(
+            height: 40.0,
+            child: Center(
+              child: Text(
+                'Network is unreachable',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            )),
+        backgroundColor: Colors.redAccent,
+      );
+      _scaffoldKey.currentState.showSnackBar(snackBar);
     }
   }
 
@@ -101,7 +100,7 @@ class _QuestionsState extends State<Questions> {
   void initState() {
     _checkIfConnected();
     getProfile();
-    _scan();
+    // _scan();
     super.initState();
   }
 
@@ -245,6 +244,7 @@ class _QuestionsState extends State<Questions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -258,6 +258,15 @@ class _QuestionsState extends State<Questions> {
           "Contact Tracing",
         ),
         elevation: 0.0,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.camera_alt),
+            onPressed: () {
+              _scan();
+            },
+            tooltip: "Save",
+          ),
+        ],
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
@@ -307,7 +316,7 @@ class _QuestionsState extends State<Questions> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    hintText: "Enter your name",
+                    hintText: "Enter customer name",
                     // prefixIcon: Icon(
                     //   Icons.perm_identity,
                     //   color: Colors.black,
@@ -322,7 +331,6 @@ class _QuestionsState extends State<Questions> {
                     // ),
                   ),
                   maxLines: 1,
-                  controller: TextEditingController(text: profile["name"]),
                   onChanged: (value) {
                     name = value;
                   },
@@ -364,7 +372,7 @@ class _QuestionsState extends State<Questions> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    hintText: "Enter your email",
+                    hintText: "Enter customer email",
                     // prefixIcon: Icon(
                     //   Icons.call,
                     //   color: Colors.black,
@@ -375,7 +383,6 @@ class _QuestionsState extends State<Questions> {
                     ),
                   ),
                   maxLines: 1,
-                  controller: TextEditingController(text: profile["email"]),
                   onChanged: (value) {
                     email = value;
                   },
@@ -417,7 +424,7 @@ class _QuestionsState extends State<Questions> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    hintText: "Enter your phone number",
+                    hintText: "Enter customer phone number",
                     // prefixIcon: Icon(
                     //   Icons.call,
                     //   color: Colors.black,
@@ -428,7 +435,6 @@ class _QuestionsState extends State<Questions> {
                     ),
                   ),
                   maxLines: 1,
-                  controller: TextEditingController(text: profile["phone"]),
                   onChanged: (value) {
                     phoneNumber = value;
                   },
@@ -467,7 +473,7 @@ class _QuestionsState extends State<Questions> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    hintText: "Enter your street",
+                    hintText: "Enter customer street",
                     // prefixIcon: Icon(
                     //   Icons.call,
                     //   color: Colors.black,
@@ -516,7 +522,7 @@ class _QuestionsState extends State<Questions> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    hintText: "Enter your barangay",
+                    hintText: "Enter customer barangay",
                     // prefixIcon: Icon(
                     //   Icons.call,
                     //   color: Colors.black,
@@ -565,7 +571,7 @@ class _QuestionsState extends State<Questions> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    hintText: "Enter your municipality",
+                    hintText: "Enter customer municipality",
                     // prefixIcon: Icon(
                     //   Icons.call,
                     //   color: Colors.black,
@@ -614,7 +620,7 @@ class _QuestionsState extends State<Questions> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    hintText: "Enter your province",
+                    hintText: "Enter customer province",
                     // prefixIcon: Icon(
                     //   Icons.call,
                     //   color: Colors.black,
@@ -663,7 +669,7 @@ class _QuestionsState extends State<Questions> {
                       ),
                       borderRadius: BorderRadius.circular(5.0),
                     ),
-                    hintText: "Enter your facebook link",
+                    hintText: "Enter customer facebook link",
                     // prefixIcon: Icon(
                     //   Icons.call,
                     //   color: Colors.black,
@@ -690,7 +696,7 @@ class _QuestionsState extends State<Questions> {
                 left: 10.0,
               ),
               child: Text(
-                "Required Questions",
+                "Answers",
                 style: TextStyle(
                   fontSize: 15.0,
                   fontWeight: FontWeight.w500,

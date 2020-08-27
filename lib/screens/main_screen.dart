@@ -12,7 +12,7 @@ import 'package:flutter_merchants/screens/search.dart';
 import 'package:flutter_merchants/util/const.dart';
 import 'package:flutter_merchants/widgets/badge.dart';
 import 'package:flutter_merchants/screens/questions.dart';
-import 'package:flutter_merchants/screens/survey.dart';
+// import 'package:flutter_merchants/screens/survey.dart.example';
 import 'package:flutter_merchants/screens/otp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return SurveyScreen();
+                      return Questions();
                     },
                   ),
                 );
