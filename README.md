@@ -4,6 +4,7 @@
 - High Priority
 ```
 
+- [ ] Choose default business
 - [ ] Scan QR code of user, get survey data embedded in dynamically generated QR.
 - [ ] Temperature field 
 - [ ] Save to database scanned survey
