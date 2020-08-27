@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_merchants/screens/main_screen.dart';
-import 'package:flutter_merchants/screens/otp.dart';
+import 'package:flutter_merchants/screens/forgot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
@@ -26,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   BuildContext _context;
   String responseName = "Enter your name";
   String responsePassword = "Enter your password";
+  String message;
 
   Future getFuture() {
     return Future(() async {
@@ -65,13 +66,16 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       } else {
+        setState(() {
+          message = body['message'];
+        });
         showDialog(
             barrierDismissible: false,
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Text("Failed"),
-                content: Text("Invalid credentials. Try again."),
+                content: Text(message),
                 actions: <Widget>[
                   new FlatButton(
                       child: const Text('OK'),
@@ -81,6 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               );
             });
+        print(body);
       }
 
       print("Debug login");
@@ -123,40 +128,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     print('Debug OTP resend');
     print(userId);
-  }
-
-  _showDialog() async {
-    await showDialog<String>(
-      context: context,
-      child: new AlertDialog(
-        contentPadding: const EdgeInsets.all(16.0),
-        content: new Row(
-          children: <Widget>[
-            new Expanded(
-              child: new TextField(
-                autofocus: true,
-                decoration: new InputDecoration(
-                  labelText: 'Reset Password',
-                  hintText: "Enter your email",
-                ),
-              ),
-            )
-          ],
-        ),
-        actions: <Widget>[
-          new FlatButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.pop(context);
-              }),
-          new FlatButton(
-              child: const Text('Submit'),
-              onPressed: () {
-                Navigator.pop(context);
-              })
-        ],
-      ),
-    );
   }
 
   _checkIfConnected() async {
@@ -332,7 +303,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               onPressed: () {
-                _showDialog();
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      resendOtp();
+                      return ForgotScreen();
+                    },
+                  ),
+                );
               },
             ),
           ),

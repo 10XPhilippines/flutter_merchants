@@ -2,7 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_merchants/providers/app_provider.dart';
 import 'package:flutter_merchants/screens/splash.dart';
+import 'package:flutter_merchants/screens/login.dart';
+import 'package:flutter_merchants/screens/otp.dart';
+import 'package:flutter_merchants/screens/change_email.dart';
+import 'package:flutter_merchants/util/const.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
 
@@ -19,12 +25,15 @@ class _ProfileState extends State<Profile> {
   bool hasConnection = false;
   String path;
   BuildContext _context;
+  bool _isLoading = false;
+  String userType;
 
   getProfile() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     data = preferences.getString("user");
     setState(() {
       profile = json.decode(data);
+      userType = profile["user_type"];
       isVerified = int.parse(profile["is_verified"].toString());
       userId = int.parse(profile["id"].toString());
       path = Network().qrCode() + "/code/" + profile["user_barcode_path"];
@@ -32,21 +41,55 @@ class _ProfileState extends State<Profile> {
   }
 
   resendOtp() async {
+    setState(() {
+      _isLoading = true;
+    });
     var input = {'id': userId};
     print(input);
+    _checkIfConnected();
 
-    var res = await Network().authData(input, '/resend');
-    var body = json.decode(res.body);
-    if (body['success']) {
-      print('Debug OTP resend');
-      print(userId);
+    if (hasConnection == true) {
+      var res = await Network().authData(input, '/resend');
+      var body = json.decode(res.body);
+      if (body['success']) {
+        print('Debug OTP resend');
+        print(userId);
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return OtpScreen();
+            },
+          ),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } else {
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 5),
+        content: Container(
+            height: 40.0,
+            child: Center(
+              child: Text(
+                'Network is unreachable',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            )),
+        backgroundColor: Colors.redAccent,
+      );
+      Scaffold.of(_context).hideCurrentSnackBar();
+      Scaffold.of(_context).showSnackBar(snackBar);
     }
   }
 
   void logout() async {
-    var res = await Network().getData('/logout');
-    var body = json.decode(res.body);
+    setState(() {
+      _isLoading = true;
+    });
     try {
+      var res = await Network().getData('/logout');
+      var body = json.decode(res.body);
       if (body['success']) {
         SharedPreferences localStorage = await SharedPreferences.getInstance();
         localStorage.remove('user');
@@ -59,8 +102,28 @@ class _ProfileState extends State<Profile> {
           ),
         );
       }
+      setState(() {
+        _isLoading = false;
+      });
     } catch (e) {
       print(e.toString());
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 5),
+        content: Container(
+            height: 40.0,
+            child: Center(
+              child: Text(
+                'Network is unreachable',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            )),
+        backgroundColor: Colors.redAccent,
+      );
+      Scaffold.of(_context).hideCurrentSnackBar();
+      Scaffold.of(_context).showSnackBar(snackBar);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -174,10 +237,9 @@ class _ProfileState extends State<Profile> {
                           int.parse(profile["is_verified"].toString()) == 1
                               ? Icon(
                                   Icons.verified_user,
-                                  color: Colors.greenAccent,
+                                  color: Colors.green,
                                 )
-                              : Icon(Icons.verified_user,
-                                  color: Colors.redAccent),
+                              : Icon(Icons.verified_user, color: Colors.red),
                         ],
                       ),
                       SizedBox(height: 5.0),
@@ -196,42 +258,40 @@ class _ProfileState extends State<Profile> {
                       SizedBox(height: 20.0),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          InkWell(
-                            onTap: () {
-                              showDialog(
-                                  barrierDismissible: false,
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text("Logout"),
-                                      content: Text("You are about to logout."),
-                                      actions: <Widget>[
-                                        new FlatButton(
-                                            child: const Text('Cancel'),
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            }),
-                                        new FlatButton(
-                                            child: const Text('Logout'),
-                                            onPressed: () {
-                                              logout();
-                                            })
-                                      ],
-                                    );
-                                  });
-                            },
-                            child: Text(
-                              "Logout",
-                              style: TextStyle(
-                                fontSize: 13.0,
-                                fontWeight: FontWeight.w400,
-                                color: Theme.of(context).accentColor,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                        children: _isLoading
+                            ? <Widget>[
+                                Center(
+                                  child: SizedBox(
+                                    child: CircularProgressIndicator(
+                                      backgroundColor: Colors.white,
+                                      strokeWidth: 2.0,
+                                    ),
+                                    height: 15.0,
+                                    width: 15.0,
+                                  ),
+                                )
+                              ]
+                            : <Widget>[
+                                InkWell(
+                                  onTap: () {
+                                    resendOtp();
+                                  },
+                                  child: int.parse(profile["is_verified"]
+                                              .toString()) ==
+                                          0
+                                      ? Text(
+                                          "Tap to verify account",
+                                          style: TextStyle(
+                                            fontSize: 11.0,
+                                            fontWeight: FontWeight.w400,
+                                            color:
+                                                Theme.of(context).accentColor,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        )
+                                      : Text(""),
+                                ),
+                              ],
                       ),
                     ],
                   ),
@@ -302,6 +362,19 @@ class _ProfileState extends State<Profile> {
             ),
             ListTile(
               title: Text(
+                "Type",
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              subtitle: Text(
+                userType[0].toUpperCase() + userType.substring(1) ??
+                    "No data available",
+              ),
+            ),
+            ListTile(
+              title: Text(
                 "Address",
                 style: TextStyle(
                   fontSize: 17,
@@ -326,6 +399,15 @@ class _ProfileState extends State<Profile> {
             ),
             Divider(),
             ListTile(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return ChangeEmailScreen();
+                    },
+                  ),
+                );
+              },
               title: Text(
                 "Change email",
                 style: TextStyle(
@@ -336,9 +418,9 @@ class _ProfileState extends State<Profile> {
               subtitle: Text(
                 'Update your email',
               ),
-              trailing: Text(
-                'Edit',
-              ),
+              // trailing: Text(
+              //   'Edit',
+              // ),
             ),
             ListTile(
               title: Text(
@@ -351,9 +433,9 @@ class _ProfileState extends State<Profile> {
               subtitle: Text(
                 'Update your password',
               ),
-              trailing: Text(
-                'Edit',
-              ),
+              // trailing: Text(
+              //   'Edit',
+              // ),
             ),
             Divider(),
             ListTile(
@@ -367,8 +449,67 @@ class _ProfileState extends State<Profile> {
               subtitle: Text(
                 'App settings',
               ),
-              trailing: Icon(
-                Icons.settings,
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.settings,
+                  size: 20.0,
+                ),
+                onPressed: () {},
+              ),
+            ),
+            Divider(),
+            ListTile(
+              title: Text(
+                "Logout",
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              subtitle: Text(
+                'Logout to your account',
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.redAccent,
+                  size: 20.0,
+                ),
+                onPressed: () {
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Logout"),
+                          content: Text("You are about to logout."),
+                          actions: <Widget>[
+                            new FlatButton(
+                                child: const Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }),
+                            new FlatButton(
+                                child: _isLoading
+                                    ? Center(
+                                        child: SizedBox(
+                                          child: CircularProgressIndicator(
+                                            backgroundColor: Colors.white,
+                                            strokeWidth: 2.0,
+                                          ),
+                                          height: 15.0,
+                                          width: 15.0,
+                                        ),
+                                      )
+                                    : const Text('Logout'),
+                                onPressed: () {
+                                  logout();
+                                })
+                          ],
+                        );
+                      });
+                },
+                tooltip: "Edit",
               ),
             ),
 

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:pinput/pin_put/pin_put.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
+import 'package:pinput/pin_put/pin_put.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'main_screen.dart';
 
@@ -145,9 +145,19 @@ class _OtpState extends State<OtpScreen> {
     data = preferences.getString("user");
     setState(() {
       profile = json.decode(data);
-      otp = int.parse(profile["otp"].toString());
       userId = int.parse(profile["id"].toString());
     });
+    try {
+      var res = await Network().getData('/user/' + userId.toString());
+      var body = json.decode(res.body);
+      if (body['success']) {
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.setString('token', json.encode(body['token']));
+        localStorage.setString('user', json.encode(body['user']));
+        otp = int.parse(body["user"]["otp"].toString());
+      }
+      print(body["user"]["otp"].toString());
+    } catch (e) {}
     print(profile);
     print(otp);
   }
@@ -192,7 +202,8 @@ class _OtpState extends State<OtpScreen> {
       submittedFieldDecoration: pinPutDecoration,
       selectedFieldDecoration: pinPutDecoration,
       followingFieldDecoration: pinPutDecoration,
-      pinAnimationType: PinAnimationType.scale,
+      //pinAnimationType: PinAnimationType.scale,
+      animationDuration: Duration(milliseconds: 0),
       textStyle: TextStyle(color: Colors.white, fontSize: 25),
     );
   }

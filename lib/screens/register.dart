@@ -19,16 +19,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _emailControl = new TextEditingController();
   final TextEditingController _phoneControl = new TextEditingController();
   final TextEditingController _passwordControl = new TextEditingController();
+  final TextEditingController _passwordConfirmControl = new TextEditingController();
 
   var name;
   var phone;
   var email;
   var password;
+  var passwordConfirm;
   bool _isLoading = false;
   String responseName = "Enter your name";
   String responsePhone = "Must include country code";
   String responseEmail = "Must be a valid email address";
   String responsePassword = "Enter your password";
+  String responseConfirm = "Confirm your password";
   BuildContext _context;
 
   Future getFuture() {
@@ -57,6 +60,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     print(data);
 
+    if(_passwordControl.text == _passwordConfirmControl.text) {}
+
     try {
       var res = await Network().authData(data, '/register');
       var body = json.decode(res.body);
@@ -80,7 +85,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               return AlertDialog(
                 title: Text("Failed"),
                 content: Text(
-                    "Error registering your details. Please try again and check your input."),
+                    "Error registering your details."),
                 actions: <Widget>[
                   new FlatButton(
                       child: const Text('OK'),
@@ -402,6 +407,57 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ),
+          // SizedBox(height: 10.0),
+          // Card(
+          //   elevation: 3.0,
+          //   child: Container(
+          //     decoration: BoxDecoration(
+          //       color: Colors.white,
+          //       borderRadius: BorderRadius.all(
+          //         Radius.circular(5.0),
+          //       ),
+          //     ),
+          //     child: TextField(
+          //       style: TextStyle(
+          //         fontSize: 15.0,
+          //         color: Colors.black,
+          //       ),
+          //       keyboardType: TextInputType.visiblePassword,
+          //       decoration: InputDecoration(
+          //         labelText: "Confirm Password",
+          //         labelStyle: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+          //         contentPadding: EdgeInsets.all(10.0),
+          //         border: OutlineInputBorder(
+          //           borderRadius: BorderRadius.circular(5.0),
+          //           borderSide: BorderSide(
+          //             color: Colors.white,
+          //           ),
+          //         ),
+          //         enabledBorder: OutlineInputBorder(
+          //           borderSide: BorderSide(
+          //             color: Colors.white,
+          //           ),
+          //           borderRadius: BorderRadius.circular(5.0),
+          //         ),
+          //         hintText: "Confirm your password",
+          //         // prefixIcon: Icon(
+          //         //   Icons.lock_outline,
+          //         //   color: Colors.black,
+          //         // ),
+          //         hintStyle: TextStyle(
+          //           fontSize: 15.0,
+          //           color: Colors.black54,
+          //         ),
+          //       ),
+          //       obscureText: true,
+          //       maxLines: 1,
+          //       controller: _passwordConfirmControl,
+          //       onChanged: (value) {
+          //         passwordConfirm = value;
+          //       },
+          //     ),
+          //   ),
+          // ),
           SizedBox(height: 40.0),
           Container(
             padding: EdgeInsets.fromLTRB(5, 0, 5, 0),

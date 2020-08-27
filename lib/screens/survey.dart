@@ -19,6 +19,7 @@ class SurveyScreen extends StatefulWidget {
 
 class _SurveyScreenState extends State<SurveyScreen> {
   Uint8List bytes = Uint8List(0);
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
   Map profile = {};
   String data;
   String userId;
@@ -64,6 +65,19 @@ class _SurveyScreenState extends State<SurveyScreen> {
       setState(() {
         isDone = true;
       });
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 5),
+        content: Container(
+            height: 40.0,
+            child: Center(
+              child: Text(
+                'Generated successfully',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            )),
+        backgroundColor: Colors.greenAccent,
+      );
+      _scaffoldKey.currentState.showSnackBar(snackBar);
     }
     print("isDone = " + isDone.toString());
   }
@@ -77,6 +91,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,  
       appBar: AppBar(
         automaticallyImplyLeading: false,
         leading: IconButton(
@@ -87,7 +102,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
         ),
         centerTitle: true,
         title: Text(
-          "Contact Tracing",
+          "Wait Lang!",
         ),
         elevation: 0.0,
         actions: <Widget>[
@@ -113,7 +128,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                         width: 100,
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                            image: ExactAssetImage('assets/tick.png'),
+                            image: ExactAssetImage('assets/806700.png'),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -121,16 +136,16 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     ),
             ),
             SizedBox(
-              height: 20,
+              height: 30,
               child: isDone
                   ? Text(
-                      "Merchant will scan this code",
+                      "Merchant will scan this generated\ndynamic code",
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 10, fontWeight: FontWeight.w300),
                     )
                   : Text(
-                      "Please complete the survey",
+                      "Complete the survey first to generate\na dynamic code",
                       textAlign: TextAlign.center,
                       style:
                           TextStyle(fontSize: 10, fontWeight: FontWeight.w300),
