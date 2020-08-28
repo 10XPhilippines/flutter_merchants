@@ -1,0 +1,69 @@
+
+  void _postTrace() async {
+    _checkIfConnected();
+    var traceData = {
+      'user_id': userId,
+      'business_id': businessId,
+      'trace_name': name,
+      'trace_contact_number': phoneNumber,
+      'trace_street': street,
+      'trace_barangay': barangay,
+      'trace_municipality': municipality,
+      'trace_province': province,
+      'trace_facebook_link': facebook,
+      'trace_email': email,
+      'trace_date_time_entry': dateEntry,
+      'trace_question_sore_throat': soreThroat,
+      'trace_question_headache': headAche,
+      'trace_question_fever': fever,
+      'trace_question_travel_history': travelHistory,
+      'trace_question_exposure': exposure,
+      'trace_question_cough_cold': cough,
+      'trace_question_body_pain': bodyPain,
+    };
+    print(traceData);
+
+    var response = await Network().authData(traceData, '/tracer');
+    var body = json.decode(response.body);
+    if (body['success']) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Thanks"),
+              content:
+                  Text("Survey submitted. Thank you for your cooperation!"),
+              actions: <Widget>[
+                new FlatButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return MainScreen();
+                          },
+                        ),
+                      );
+                    }),
+              ],
+            );
+          });
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Failed"),
+              content: Text("Please correct the following error."),
+              actions: <Widget>[
+                new FlatButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+              ],
+            );
+          });
+      print(body);
+    }
+  }

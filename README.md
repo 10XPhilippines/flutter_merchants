@@ -5,8 +5,8 @@
 ```
 
 - [X] Choose default business
-- [ ] Check if default business is set (questions.dart)
-- [ ] Scan QR code of user, get survey data embedded in dynamically generated QR.
+- [X] Check if default business is set (questions.dart)
+- [X] Scan QR code of user, get survey data embedded in dynamically generated QR.
 - [ ] Temperature field 
 - [ ] Save to database scanned survey
 
