@@ -23,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   int userId;
   int isVerified;
   bool _isLoading = false;
+  bool _isButtonDisabled = false;
   BuildContext _context;
   String responseName = "Enter your name";
   String responsePassword = "Enter your password";
@@ -44,6 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _login() async {
     setState(() {
       _isLoading = true;
+      _isButtonDisabled = true;
     });
 
     var data = {'email': email, 'password': password};
@@ -68,6 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         setState(() {
           message = body['message'];
+          _isButtonDisabled = false;
         });
         showDialog(
             barrierDismissible: false,
@@ -338,10 +341,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: Colors.white,
                       ),
                     ),
-              onPressed: () async {
-                _login();
-                // await pr.show();
-              },
+              onPressed: _isButtonDisabled ? null : () => _login(),
               color: Theme.of(context).accentColor,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(5)),

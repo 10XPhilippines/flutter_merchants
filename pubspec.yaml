@@ -35,7 +35,7 @@ dependencies:
   steps_indicator: ^1.0.1
   step_progress_indicator: ^0.2.3+6
   percent_indicator: ^2.1.5
-
+  grouped_buttons: ^1.0.4
   
 dev_dependencies:
   flutter_test:

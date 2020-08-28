@@ -8,6 +8,7 @@ import 'package:flutter_merchants/screens/splash.dart';
 import 'package:flutter_merchants/screens/login.dart';
 import 'package:flutter_merchants/screens/otp.dart';
 import 'package:flutter_merchants/screens/change_email.dart';
+import 'package:flutter_merchants/screens/default_business.dart';
 import 'package:flutter_merchants/util/const.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
@@ -212,12 +213,12 @@ class _ProfileState extends State<Profile> {
               children: <Widget>[
                 Padding(
                   padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                  child: Image.network(
-                    profile["image"] ??
-                        "https://img.icons8.com/fluent/48/000000/user-male-circle.png",
-                    fit: BoxFit.cover,
-                    width: 100.0,
-                    height: 100.0,
+                  child: new CircleAvatar(
+                    child: new Image.network(
+                      profile["image"] ??
+                          "https://img.icons8.com/fluent/48/000000/user-male-circle.png",
+                    ),
+                    radius: 50.0,
                   ),
                 ),
                 Expanded(
@@ -272,25 +273,38 @@ class _ProfileState extends State<Profile> {
                                 )
                               ]
                             : <Widget>[
-                                InkWell(
-                                  onTap: () {
-                                    resendOtp();
-                                  },
-                                  child: int.parse(profile["is_verified"]
-                                              .toString()) ==
-                                          0
-                                      ? Text(
+                                double.parse(profile["is_verified"]
+                                            .toString()) ==
+                                        0
+                                    ? InkWell(
+                                        onTap: () {
+                                          resendOtp();
+                                        },
+                                        child: Text(
                                           "Tap to verify account",
                                           style: TextStyle(
-                                            fontSize: 11.0,
+                                            fontSize: 12.0,
                                             fontWeight: FontWeight.w400,
                                             color:
                                                 Theme.of(context).accentColor,
                                           ),
                                           overflow: TextOverflow.ellipsis,
-                                        )
-                                      : Text(""),
-                                ),
+                                        ),
+                                      )
+                                    : InkWell(
+                                        onTap: () {
+                                          print("profile test");
+                                        },
+                                        child: Text(
+                                          "Tap to edit profile",
+                                          style: TextStyle(
+                                            fontSize: 12.0,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.blue,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
                               ],
                       ),
                     ],
@@ -311,16 +325,16 @@ class _ProfileState extends State<Profile> {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                trailing: IconButton(
-                  icon: Icon(
-                    Icons.mode_edit,
-                    size: 20.0,
-                  ),
-                  onPressed: () {
-                    _showDialog();
-                  },
-                  tooltip: "Edit",
-                ),
+                // trailing: IconButton(
+                //   icon: Icon(
+                //     Icons.mode_edit,
+                //     size: 20.0,
+                //   ),
+                //   onPressed: () {
+                //     _showDialog();
+                //   },
+                //   tooltip: "Edit",
+                // ),
               ),
             ),
 
@@ -439,26 +453,77 @@ class _ProfileState extends State<Profile> {
             ),
             Divider(),
             ListTile(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return DefaultBusinessScreen();
+                    },
+                  ),
+                );
+              },
               title: Text(
-                "Settings",
+                "Business",
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               subtitle: Text(
-                'App settings',
+                'Choose default business',
               ),
               trailing: IconButton(
                 icon: Icon(
-                  Icons.settings,
+                  Icons.store,
                   size: 20.0,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return DefaultBusinessScreen();
+                      },
+                    ),
+                  );
+                },
               ),
             ),
             Divider(),
             ListTile(
+              onTap: () {
+                showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Logout"),
+                        content: Text("You are about to logout."),
+                        actions: <Widget>[
+                          new FlatButton(
+                              child: const Text('Cancel'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              }),
+                          new FlatButton(
+                              child: _isLoading
+                                  ? Center(
+                                      child: SizedBox(
+                                        child: CircularProgressIndicator(
+                                          backgroundColor: Colors.white,
+                                          strokeWidth: 2.0,
+                                        ),
+                                        height: 15.0,
+                                        width: 15.0,
+                                      ),
+                                    )
+                                  : const Text('Logout'),
+                              onPressed: () {
+                                logout();
+                              })
+                        ],
+                      );
+                    });
+              },
               title: Text(
                 "Logout",
                 style: TextStyle(

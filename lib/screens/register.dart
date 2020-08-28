@@ -20,7 +20,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController _phoneControl = new TextEditingController();
   final TextEditingController _passwordControl = new TextEditingController();
   final TextEditingController _passwordConfirmControl = new TextEditingController();
-
+  bool _isButtonDisabled = false;
   var name;
   var phone;
   var email;
@@ -50,6 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void _register() async {
     setState(() {
       _isLoading = true;
+      _isButtonDisabled = true;
     });
     var data = {
       'email': email,
@@ -60,7 +61,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
     print(data);
 
-    if(_passwordControl.text == _passwordConfirmControl.text) {}
+    if (_passwordControl.text == _passwordConfirmControl.text) {}
 
     try {
       var res = await Network().authData(data, '/register');
@@ -84,8 +85,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: Text("Failed"),
-                content: Text(
-                    "Error registering your details."),
+                content: Text("Error registering your details."),
                 actions: <Widget>[
                   new FlatButton(
                       child: const Text('OK'),
@@ -96,6 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               );
             });
         setState(() {
+          _isButtonDisabled = false;
           responseName = body["message"]["name"]
               .toString()
               .replaceAll(new RegExp(r'\['), '')
@@ -480,13 +481,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         color: Colors.white,
                       ),
                     ),
-              onPressed: () {
-                _register();
-              },
+              onPressed: _isButtonDisabled ? null : () => _register(),
               color: Theme.of(context).accentColor,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(5)
-              ),
+                  borderRadius: BorderRadius.circular(5)),
             ),
           ),
           SizedBox(height: 10.0),

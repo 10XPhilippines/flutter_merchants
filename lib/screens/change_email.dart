@@ -134,6 +134,21 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
+            Container(
+              alignment: Alignment.topLeft,
+              margin: EdgeInsets.only(
+                top: 25.0,
+                left: 10.0,
+              ),
+              child: Text(
+                "Change your email.",
+                style: TextStyle(
+                  fontSize: 15.0,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black54
+                ),
+              ),
+            ),
             SizedBox(
               height: 10.0,
             ),
