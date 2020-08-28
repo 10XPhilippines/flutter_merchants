@@ -17,14 +17,13 @@ class _QuestionsState extends State<Questions> {
   final TextEditingController _phoneControl = new TextEditingController();
   final TextEditingController _nameControl = new TextEditingController();
   final TextEditingController _emailControl = new TextEditingController();
-  
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Map profile = {};
   Map business = {};
   Map user = {};
   String data;
   String barcode = "";
-  bool hasBusiness = false;
   String businessName = "No scanned code yet";
   String businessId = "";
   String userId = "";
@@ -60,7 +59,7 @@ class _QuestionsState extends State<Questions> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text("Scan"),
-            content: Text("Scan a business QR Code first."),
+            content: Text("Scan a customer code first."),
             actions: <Widget>[
               new FlatButton(
                   child: const Text('Scan'),
@@ -100,7 +99,6 @@ class _QuestionsState extends State<Questions> {
   void initState() {
     _checkIfConnected();
     getProfile();
-    // _scan();
     super.initState();
   }
 
@@ -115,130 +113,7 @@ class _QuestionsState extends State<Questions> {
   Future _scan() async {
     String barcode = await scanner.scan();
     setState(() => this.barcode = barcode);
-    if (hasBusiness == false) {
-      showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Unavailable"),
-              content: Text("No business name is linked to that QR code."),
-              actions: <Widget>[
-                new FlatButton(
-                    child: const Text('Close'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-                new FlatButton(
-                    child: const Text('Try again'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _scan();
-                    })
-              ],
-            );
-          });
-    }
     print(barcode);
-    _getBusiness();
-  }
-
-  _getBusiness() async {
-    String url = '/business/' + barcode + '/' + profile["id"].toString();
-    print("GET: " + url);
-    var res = await Network().getData(url);
-    var body = json.decode(res.body);
-    if (body['success']) {
-      setState(() {
-        business = body;
-        businessName = business["business"]["business_name"];
-        hasBusiness = true;
-        dateEntry = DateFormat('yyyy-MM-dd kk:mm:ss').format(now);
-        businessId = business["business"]["id"].toString();
-        userId = business["user"]["id"].toString();
-        name = profile["name"];
-        email = profile["email"];
-        phoneNumber = profile["phone"];
-      });
-    } else {
-      setState(() {
-        hasBusiness = false;
-      });
-    }
-    print(businessId);
-    print(dateEntry);
-    print(userId);
-    print(hasBusiness);
-    print(business);
-  }
-
-  void _postTrace() async {
-    _checkIfConnected();
-    var traceData = {
-      'user_id': userId,
-      'business_id': businessId,
-      'trace_name': name,
-      'trace_contact_number': phoneNumber,
-      'trace_street': street,
-      'trace_barangay': barangay,
-      'trace_municipality': municipality,
-      'trace_province': province,
-      'trace_facebook_link': facebook,
-      'trace_email': email,
-      'trace_date_time_entry': dateEntry,
-      'trace_question_sore_throat': soreThroat,
-      'trace_question_headache': headAche,
-      'trace_question_fever': fever,
-      'trace_question_travel_history': travelHistory,
-      'trace_question_exposure': exposure,
-      'trace_question_cough_cold': cough,
-      'trace_question_body_pain': bodyPain,
-    };
-    print(traceData);
-
-    var response = await Network().authData(traceData, '/tracer');
-    var body = json.decode(response.body);
-    if (body['success']) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Thanks"),
-              content:
-                  Text("Survey submitted. Thank you for your cooperation!"),
-              actions: <Widget>[
-                new FlatButton(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return MainScreen();
-                          },
-                        ),
-                      );
-                    }),
-              ],
-            );
-          });
-    } else {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Failed"),
-              content: Text("Please correct the following error."),
-              actions: <Widget>[
-                new FlatButton(
-                    child: const Text('OK'),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    }),
-              ],
-            );
-          });
-      print(body);
-    }
   }
 
   @override
@@ -255,12 +130,12 @@ class _QuestionsState extends State<Questions> {
         ),
         centerTitle: true,
         title: Text(
-          "Contact Tracing",
+          "Wait Lang!",
         ),
         elevation: 0.0,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.camera_alt),
+            icon: Icon(Icons.camera),
             onPressed: () {
               _scan();
             },
@@ -277,12 +152,11 @@ class _QuestionsState extends State<Questions> {
               alignment: Alignment.topLeft,
               margin: EdgeInsets.only(top: 25.0, left: 10.0),
               child: Text(
-                businessName,
+                "Scan a customer code.",
                 style: TextStyle(
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).accentColor,
-                ),
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54),
               ),
             ),
             SizedBox(height: 10.0),
@@ -817,7 +691,7 @@ class _QuestionsState extends State<Questions> {
                             _checkIfScanned();
                           } else {
                             Navigator.pop(context);
-                            _postTrace();
+                            // _postTrace();
                           }
                         })
                   ],

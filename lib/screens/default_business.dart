@@ -63,7 +63,38 @@ class _DefaultBusinessScreenState extends State<DefaultBusinessScreen> {
             businessId.add(item["business_name"].toString());
           }
         });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+        final snackBar = SnackBar(
+          duration: Duration(seconds: 5),
+          content: Container(
+              height: 40.0,
+              child: Center(
+                child: Text(
+                  'Network is unreachable',
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              )),
+          backgroundColor: Colors.redAccent,
+        );
+        _scaffoldKey.currentState.showSnackBar(snackBar);
       }
+    } else {
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 5),
+        content: Container(
+            height: 40.0,
+            child: Center(
+              child: Text(
+                'Network is unreachable',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            )),
+        backgroundColor: Colors.redAccent,
+      );
+      _scaffoldKey.currentState.showSnackBar(snackBar);
     }
   }
 
@@ -86,18 +117,18 @@ class _DefaultBusinessScreenState extends State<DefaultBusinessScreen> {
           _isLoading = false;
         });
         final snackBar = SnackBar(
-        duration: Duration(seconds: 5),
-        content: Container(
-            height: 40.0,
-            child: Center(
-              child: Text(
-                message,
-                style: TextStyle(fontSize: 16.0),
-              ),
-            )),
-        backgroundColor: Colors.greenAccent,
-      );
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+          duration: Duration(seconds: 5),
+          content: Container(
+              height: 40.0,
+              child: Center(
+                child: Text(
+                  message,
+                  style: TextStyle(fontSize: 16.0),
+                ),
+              )),
+          backgroundColor: Colors.greenAccent,
+        );
+        _scaffoldKey.currentState.showSnackBar(snackBar);
       }
     }
   }
@@ -212,7 +243,7 @@ class _DefaultBusinessScreenState extends State<DefaultBusinessScreen> {
       ),
       // floatingActionButton: FloatingActionButton.extended(
       //   onPressed: () {
-      //     
+      //
       //   },
       //   label: Text('Save'),
       //   icon: Icon(Icons.check_circle),

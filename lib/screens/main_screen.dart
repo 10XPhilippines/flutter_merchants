@@ -69,7 +69,7 @@ class _MainScreenState extends State<MainScreen> {
         appBar: AppBar(
           leading: Builder(builder: (BuildContext context) {
             return IconButton(
-              icon: Icon(Icons.camera, size: 20.0),
+              icon: Icon(Icons.track_changes, size: 20.0),
               onPressed: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
