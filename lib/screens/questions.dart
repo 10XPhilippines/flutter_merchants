@@ -46,6 +46,7 @@ class _QuestionsState extends State<Questions> {
   Map business = {};
   Map user = {};
   bool defaultBusiness;
+  int defaultMerchant;
   String data;
   String barcode = "";
   String businessName = "No scanned code yet";
@@ -55,10 +56,12 @@ class _QuestionsState extends State<Questions> {
   var email;
   var phoneNumber;
   var street;
+  var gender;
   var barangay;
   var municipality;
   var province;
   var facebook;
+  var temperature;
 
   List<SmartSelectOption<String>> options = [
     SmartSelectOption<String>(value: 'Yes', title: 'Yes'),
@@ -82,6 +85,7 @@ class _QuestionsState extends State<Questions> {
             _isLoading = false;
             fetchUser = body["user"];
             name = fetchUser["name"];
+            gender = fetchUser["sex"];
           });
         } else {
           setState(() {
@@ -95,6 +99,7 @@ class _QuestionsState extends State<Questions> {
   }
 
   _checkIfScanned() {
+    print("QR is empty");
     showDialog(
         barrierDismissible: false,
         context: context,
@@ -114,6 +119,8 @@ class _QuestionsState extends State<Questions> {
                   onPressed: () {
                     // _scan();
                     Navigator.pop(context);
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => QRExample()));
                   })
             ],
           );
@@ -137,6 +144,8 @@ class _QuestionsState extends State<Questions> {
           defaultBusiness = true;
 
           //Populate the text fields
+          defaultMerchant = body["business"]["id"];
+          print(defaultMerchant.toString());
         });
       } else {
         setState(() {
@@ -225,11 +234,17 @@ class _QuestionsState extends State<Questions> {
     });
   }
 
-  // Future _scan() async {
-  //   String barcode = await scanner.scan();
-  //   setState(() => this.barcode = barcode);
-  //   print(barcode);
-  // }
+  submitSurvey() async {
+    var data = {
+      'user_id': userIdFetch,
+      'business_id': defaultMerchant,
+      'trace_name': name,
+      'trace_gender': gender,
+      'trace_contact_number': phoneNumber,
+    };
+
+    print(data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -266,20 +281,6 @@ class _QuestionsState extends State<Questions> {
           shrinkWrap: true,
           children: _isLoading
               ? <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                    margin: EdgeInsets.only(
-                      top: 25.0,
-                      left: 10.0,
-                    ),
-                    child: Text(
-                      "Scan a customer code.",
-                      style: TextStyle(
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black54),
-                    ),
-                  ),
                   SizedBox(
                     height: 50,
                   ),
@@ -354,7 +355,9 @@ class _QuestionsState extends State<Questions> {
                           // ),
                         ),
                         maxLines: 1,
-                        controller: TextEditingController(text: fetchUser["name"]),
+                        controller: TextEditingController(
+                                text: fetchUser["name"]) ??
+                            TextEditingController(text: "No data available"),
                         onChanged: (value) {
                           name = value;
                         },
@@ -406,7 +409,9 @@ class _QuestionsState extends State<Questions> {
                           ),
                         ),
                         maxLines: 1,
-                        controller: TextEditingController(text: fetchUser["email"]),
+                        controller: TextEditingController(
+                                text: fetchUser["email"]) ??
+                            TextEditingController(text: "No data available"),
                         onChanged: (value) {
                           email = value;
                         },
@@ -458,7 +463,9 @@ class _QuestionsState extends State<Questions> {
                           ),
                         ),
                         maxLines: 1,
-                        controller: TextEditingController(text: fetchUser["phone"]),
+                        controller: TextEditingController(
+                                text: fetchUser["phone"]) ??
+                            TextEditingController(text: "No data available"),
                         onChanged: (value) {
                           phoneNumber = value;
                         },
@@ -484,6 +491,8 @@ class _QuestionsState extends State<Questions> {
                         ),
                         decoration: InputDecoration(
                           labelText: "Municipality",
+                          labelStyle:
+                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
                           contentPadding: EdgeInsets.all(10.0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
@@ -508,7 +517,8 @@ class _QuestionsState extends State<Questions> {
                           ),
                         ),
                         maxLines: 1,
-                        controller: TextEditingController(text: fetchUser["municipality"]),
+                        controller:
+                            TextEditingController(text: fetchUser["city"]),
                         onChanged: (value) {
                           municipality = value;
                         },
@@ -532,6 +542,8 @@ class _QuestionsState extends State<Questions> {
                         ),
                         decoration: InputDecoration(
                           labelText: "Province",
+                          labelStyle:
+                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
                           contentPadding: EdgeInsets.all(10.0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
@@ -556,9 +568,60 @@ class _QuestionsState extends State<Questions> {
                           ),
                         ),
                         maxLines: 1,
-                        controller: TextEditingController(text: fetchUser["province"]),
+                        controller:
+                            TextEditingController(text: fetchUser["province"]),
                         onChanged: (value) {
                           province = value;
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10.0),
+                  Card(
+                    elevation: 3.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(5.0),
+                        ),
+                      ),
+                      child: TextField(
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black,
+                        ),
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          labelText: "Temperature",
+                          labelStyle:
+                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                          contentPadding: EdgeInsets.all(10.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          hintText: "Enter customer temperature",
+                          // prefixIcon: Icon(
+                          //   Icons.call,
+                          //   color: Colors.black,
+                          // ),
+                          hintStyle: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        maxLines: 1,
+                        onChanged: (value) {
+                          temperature = value;
                         },
                       ),
                     ),
@@ -704,7 +767,7 @@ class _QuestionsState extends State<Questions> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          print("Global qrText = " + qrText);
+          // print("Global qrText = " + qrText);
           showDialog(
               barrierDismissible: false,
               context: context,
@@ -721,11 +784,12 @@ class _QuestionsState extends State<Questions> {
                     new FlatButton(
                         child: const Text('Submit'),
                         onPressed: () {
-                          if (barcode.isEmpty) {
+                          if (barcode?.isEmpty ?? true) {
                             Navigator.pop(context);
                             _checkIfScanned();
                           } else {
                             Navigator.pop(context);
+                            submitSurvey();
                           }
                         })
                   ],

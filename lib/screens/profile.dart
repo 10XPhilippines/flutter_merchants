@@ -214,7 +214,7 @@ class _ProfileState extends State<Profile> {
                 Padding(
                   padding: EdgeInsets.only(left: 10.0, right: 10.0),
                   child: new CircleAvatar(
-                    child: new Image.network(
+                    backgroundImage: NetworkImage(Network().qrCode() +
                       profile["image"] ??
                           "https://img.icons8.com/fluent/48/000000/user-male-circle.png",
                     ),
@@ -396,7 +396,7 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               subtitle: Text(
-                profile["province"] ?? "No data available",
+                profile["city"] + ', ' + profile["province"] ?? "No data available",
               ),
             ),
             ListTile(
@@ -619,7 +619,7 @@ class _ProfileState extends State<Profile> {
                   content: hasConnection
                       ? Image.network(path)
                       : Text(
-                          "No internet connection",
+                          "Unable to fetch code. There is no internet connection.",
                           textAlign: TextAlign.center,
                         ),
                   actions: <Widget>[

@@ -187,20 +187,6 @@ class _DefaultBusinessScreenState extends State<DefaultBusinessScreen> {
           shrinkWrap: true,
           children: _isLoading
               ? <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                    margin: EdgeInsets.only(
-                      top: 25.0,
-                      left: 10.0,
-                    ),
-                    child: Text(
-                      "Choose default business to be use in contact tracing.",
-                      style: TextStyle(
-                          fontSize: 15.0,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black54),
-                    ),
-                  ),
                   SizedBox(
                     height: 50,
                   ),
