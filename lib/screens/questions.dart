@@ -10,6 +10,8 @@ import 'package:flutter_merchants/screens/main_screen.dart';
 import 'package:flutter_merchants/screens/default_business.dart';
 import 'package:twitter_qr_scanner/twitter_qr_scanner.dart';
 import 'package:twitter_qr_scanner/QrScannerOverlayShape.dart';
+import 'package:geocoder/geocoder.dart';
+import 'package:geolocator/geolocator.dart';
 
 var qrText;
 bool hasQrValue = false;
@@ -39,7 +41,7 @@ class _QuestionsState extends State<Questions> {
   final TextEditingController _emailControl = new TextEditingController();
   GlobalKey qrKey = GlobalKey();
   QRViewController controller;
-
+  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Map profile = {};
   Map fetchUser = {};
@@ -56,14 +58,15 @@ class _QuestionsState extends State<Questions> {
   var email;
   var phoneNumber;
   var street;
-  var gender;
   var barangay;
   var municipality;
   var province;
+  var gender;
   var facebook;
   var temperature;
 
-  String errorName;
+  String errorName = "Enter customer name";
+  String errorProvince = "Enter customer province";
 
   List<SmartSelectOption<String>> options = [
     SmartSelectOption<String>(value: 'Yes', title: 'Yes'),
@@ -89,9 +92,9 @@ class _QuestionsState extends State<Questions> {
             name = fetchUser["name"];
             email = fetchUser["email"];
             phoneNumber = fetchUser["phone"];
-            barangay = fetchUser["barangay"];
-            municipality = fetchUser["city"];
-            province = fetchUser["province"];
+            // barangay = fetchUser["barangay"];
+            // municipality = fetchUser["city"];
+            // province = fetchUser["province"];
             gender = fetchUser["sex"];
           });
         } else {
@@ -160,7 +163,7 @@ class _QuestionsState extends State<Questions> {
           defaultBusiness = false;
         });
         final snackBar = SnackBar(
-          duration: Duration(seconds: 5),
+          duration: Duration(minutes: 5),
           content: Container(
               height: 40.0,
               child: Center(
@@ -229,7 +232,31 @@ class _QuestionsState extends State<Questions> {
       barcode = "";
     });
     fetchUserData();
+    _getLocation();
     super.initState();
+  }
+
+  _getLocation() async {
+    Position position = await Geolocator()
+        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    debugPrint('location: ${position.latitude}');
+
+    final coordinates = new Coordinates(position.latitude, position.longitude);
+    debugPrint('coordinates is: $coordinates');
+
+    var addresses =
+        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    var first = addresses.first;
+
+    setState(() {
+      barangay = first.thoroughfare;
+      municipality = first.locality;
+      province = first.subAdminArea;
+    });
+
+    print(first.thoroughfare);
+    print(first.locality);
+    print(first.subAdminArea);
   }
 
   getProfile() async {
@@ -245,27 +272,27 @@ class _QuestionsState extends State<Questions> {
     var data = {
       'user_id': userIdFetch,
       'business_id': defaultMerchant,
-      'trace_name': name,
-      'trace_gender': gender,
-      'trace_contact_number': phoneNumber,
-      'trace_barangay': barangay,
-      'trace_municipality': municipality,
-      'trace_province': province,
-      'trace_email': email,
-      'trace_date_time_entry': dateEntry,
-      'trace_question_sore_throat': soreThroat,
-      'trace_question_headache': headAche,
-      'trace_question_fever': fever,
-      'trace_question_travel_history': travelHistory,
-      'trace_question_exposure': exposure,
-      'trace_question_cough_cold': cough,
-      'trace_question_body_pain': bodyPain,
+      'name': name,
+      'gender': gender,
+      'contact_number': phoneNumber,
+      'barangay': barangay,
+      'municipality': municipality,
+      'province': province,
+      'email': email,
+      'date_time_entry': dateEntry,
+      'question_sore_throat': soreThroat,
+      'question_headache': headAche,
+      'question_fever': fever,
+      'question_travel_history': travelHistory,
+      'question_exposure': exposure,
+      'question_cough_cold': cough,
+      'question_body_pain': bodyPain,
       'temperature': temperature,
     };
 
     print(data);
 
-    var response = await Network().authData(data, '/tracer');
+    var response = await Network().authData(data, '/submit_tracer');
     var body = json.decode(response.body);
     if (body['success']) {
       showDialog(
@@ -297,7 +324,14 @@ class _QuestionsState extends State<Questions> {
             .replaceAll(new RegExp(r'\['), '')
             .replaceAll(new RegExp(r'\]'), '');
         if (errorName == "null") {
-          errorName = "";
+          errorName = "Enter customer name";
+        }
+        errorProvince = body["message"]["province"]
+            .toString()
+            .replaceAll(new RegExp(r'\['), '')
+            .replaceAll(new RegExp(r'\]'), '');
+        if (errorProvince == "null") {
+          errorProvince = "Enter customer province";
         }
       });
       showDialog(
@@ -348,566 +382,566 @@ class _QuestionsState extends State<Questions> {
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-        child: ListView(
-          shrinkWrap: true,
-          children: _isLoading
-              ? <Widget>[
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Center(
-                    child: SizedBox(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.white,
-                        strokeWidth: 2.0,
-                      ),
-                      height: 15.0,
-                      width: 15.0,
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
+          child: ListView(
+            shrinkWrap: true,
+            children: _isLoading
+                ? <Widget>[
+                    SizedBox(
+                      height: 50,
                     ),
-                  )
-                ]
-              : <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                    margin: EdgeInsets.only(top: 25.0, left: 10.0),
-                    child: Text(
-                      "Scan a customer code.",
-                      style: TextStyle(
+                    Center(
+                      child: SizedBox(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                          strokeWidth: 2.0,
+                        ),
+                        height: 15.0,
+                        width: 15.0,
+                      ),
+                    )
+                  ]
+                : <Widget>[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(top: 25.0, left: 10.0),
+                      child: Text(
+                        "Customer Data",
+                        style: TextStyle(
+                            fontSize: 15.0,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black54),
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Card(
+                      elevation: 3.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5.0),
+                          ),
+                        ),
+                        child: TextFormField(
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: "Name",
+                            labelStyle:
+                                TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                            contentPadding: EdgeInsets.all(10.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            hintText: "Enter customer name",
+                            // prefixIcon: Icon(
+                            //   Icons.perm_identity,
+                            //   color: Colors.black,
+                            // ),
+                            hintStyle: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.black54,
+                            ),
+                            // prefixIcon: Icon(
+                            //   Icons.perm_identity,
+                            //   color: Colors.black,
+                            // ),s
+                          ),
+                          maxLines: 1,
+                          readOnly: true,
+                          initialValue: fetchUser["name"],
+                          onChanged: (value) {
+                            name = value;
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Card(
+                      elevation: 3.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5.0),
+                          ),
+                        ),
+                        child: TextFormField(
+                          enabled: true,
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black,
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            labelText: "Email Address",
+                            labelStyle:
+                                TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                            contentPadding: EdgeInsets.all(10.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            hintText: "Enter customer email",
+                            // prefixIcon: Icon(
+                            //   Icons.call,
+                            //   color: Colors.black,
+                            // ),
+                            hintStyle: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          maxLines: 1,
+                          readOnly: true,
+                          initialValue: fetchUser["email"],
+                          onChanged: (value) {
+                            email = value;
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10.0),
+                    Card(
+                      elevation: 3.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5.0),
+                          ),
+                        ),
+                        child: TextFormField(
+                          enabled: true,
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black,
+                          ),
+                          keyboardType: TextInputType.phone,
+                          decoration: InputDecoration(
+                            labelText: "Phone Number",
+                            labelStyle:
+                                TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                            contentPadding: EdgeInsets.all(10.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            hintText: "Enter customer phone number",
+                            // prefixIcon: Icon(
+                            //   Icons.call,
+                            //   color: Colors.black,
+                            // ),
+                            hintStyle: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          maxLines: 1,
+                          readOnly: true,
+                          initialValue: fetchUser["phone"],
+                          onChanged: (value) {
+                            phoneNumber = value;
+                          },
+                        ),
+                      ),
+                    ),
+                    // SizedBox(
+                    //   height: 10.0,
+                    // ),
+                    // Card(
+                    //   elevation: 3.0,
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.all(
+                    //         Radius.circular(5.0),
+                    //       ),
+                    //     ),
+                    //     child: TextFormField(
+                    //       style: TextStyle(
+                    //         fontSize: 15.0,
+                    //         color: Colors.black,
+                    //       ),
+                    //       decoration: InputDecoration(
+                    //         labelText: "Barangay",
+                    //         labelStyle:
+                    //             TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                    //         contentPadding: EdgeInsets.all(10.0),
+                    //         border: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(5.0),
+                    //           borderSide: BorderSide(
+                    //             color: Colors.white,
+                    //           ),
+                    //         ),
+                    //         enabledBorder: OutlineInputBorder(
+                    //           borderSide: BorderSide(
+                    //             color: Colors.white,
+                    //           ),
+                    //           borderRadius: BorderRadius.circular(5.0),
+                    //         ),
+                    //         hintText: "Enter customer barangay",
+                    //         // prefixIcon: Icon(
+                    //         //   Icons.call,
+                    //         //   color: Colors.black,
+                    //         // ),
+                    //         hintStyle: TextStyle(
+                    //           fontSize: 15.0,
+                    //           color: Colors.black54,
+                    //         ),
+                    //       ),
+                    //       maxLines: 1,
+                    //       readOnly: true,
+                    //       initialValue: barangay,
+                    //       onChanged: (value) {
+                    //         barangay = value;
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(
+                    //   height: 10.0,
+                    // ),
+                    // Card(
+                    //   elevation: 3.0,
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.all(
+                    //         Radius.circular(5.0),
+                    //       ),
+                    //     ),
+                    //     child: TextFormField(
+                    //       style: TextStyle(
+                    //         fontSize: 15.0,
+                    //         color: Colors.black,
+                    //       ),
+                    //       decoration: InputDecoration(
+                    //         labelText: "Municipality",
+                    //         labelStyle:
+                    //             TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                    //         contentPadding: EdgeInsets.all(10.0),
+                    //         border: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(5.0),
+                    //           borderSide: BorderSide(
+                    //             color: Colors.white,
+                    //           ),
+                    //         ),
+                    //         enabledBorder: OutlineInputBorder(
+                    //           borderSide: BorderSide(
+                    //             color: Colors.white,
+                    //           ),
+                    //           borderRadius: BorderRadius.circular(5.0),
+                    //         ),
+                    //         hintText: "Enter customer municipality",
+                    //         // prefixIcon: Icon(
+                    //         //   Icons.call,
+                    //         //   color: Colors.black,
+                    //         // ),
+                    //         hintStyle: TextStyle(
+                    //           fontSize: 15.0,
+                    //           color: Colors.black54,
+                    //         ),
+                    //       ),
+                    //       maxLines: 1,
+                    //       readOnly: true,
+                    //       initialValue: municipality,
+                    //       onChanged: (value) {
+                    //         municipality = value;
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    // SizedBox(height: 10.0),
+                    // Card(
+                    //   elevation: 3.0,
+                    //   child: Container(
+                    //     decoration: BoxDecoration(
+                    //       color: Colors.white,
+                    //       borderRadius: BorderRadius.all(
+                    //         Radius.circular(5.0),
+                    //       ),
+                    //     ),
+                    //     child: TextFormField(
+                    //       style: TextStyle(
+                    //         fontSize: 15.0,
+                    //         color: Colors.black,
+                    //       ),
+                    //       decoration: InputDecoration(
+                    //         labelText: "Province",
+                    //         labelStyle:
+                    //             TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                    //         contentPadding: EdgeInsets.all(10.0),
+                    //         border: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(5.0),
+                    //           borderSide: BorderSide(
+                    //             color: Colors.white,
+                    //           ),
+                    //         ),
+                    //         enabledBorder: OutlineInputBorder(
+                    //           borderSide: BorderSide(
+                    //             color: Colors.white,
+                    //           ),
+                    //           borderRadius: BorderRadius.circular(5.0),
+                    //         ),
+                    //         hintText:
+                    //             errorProvince ?? "Enter customer province",
+                    //         // prefixIcon: Icon(
+                    //         //   Icons.call,
+                    //         //   color: Colors.black,
+                    //         // ),
+                    //         hintStyle: TextStyle(
+                    //           fontSize: 15.0,
+                    //           color: Colors.black54,
+                    //         ),
+                    //       ),
+                    //       maxLines: 1,
+                    //       readOnly: true,
+                    //       initialValue: province,
+                    //       onChanged: (value) {
+                    //         province = value;
+                    //       },
+                    //     ),
+                    //   ),
+                    // ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(
+                        left: 10.0,
+                      ),
+                      child: Text(
+                        "Required Field",
+                        style: TextStyle(
                           fontSize: 15.0,
                           fontWeight: FontWeight.w500,
-                          color: Colors.black54),
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Card(
-                    elevation: 3.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
+                          color: Colors.black54,
                         ),
                       ),
-                      child: TextFormField(
-                        validator: (errorName) {
-                          if(errorName.isNotEmpty) {
-                            return errorName;
-                          }
-                          return null;
-                        },
-                        readOnly: true,
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Card(
+                      elevation: 3.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(5.0),
+                          ),
+                        ),
+                        child: TextFormField(
+                          style: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black,
+                          ),
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: "Temperature",
+                            labelStyle:
+                                TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                            contentPadding: EdgeInsets.all(10.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.white,
+                              ),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            hintText: "Enter customer temperature",
+                            // prefixIcon: Icon(
+                            //   Icons.call,
+                            //   color: Colors.black,
+                            // ),
+                            hintStyle: TextStyle(
+                              fontSize: 15.0,
+                              color: Colors.black54,
+                            ),
+                          ),
+                          maxLines: 1,
+                          onChanged: (value) {
+                            temperature = value;
+                          },
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(
+                        left: 10.0,
+                      ),
+                      child: Text(
+                        "Customer Survey",
                         style: TextStyle(
                           fontSize: 15.0,
-                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
                         ),
-                        decoration: InputDecoration(
-                          labelText: "Name",
-                          labelStyle:
-                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                          contentPadding: EdgeInsets.all(10.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          hintText: "Enter customer name",
-                          // prefixIcon: Icon(
-                          //   Icons.perm_identity,
-                          //   color: Colors.black,
-                          // ),
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.black54,
-                          ),
-                          // prefixIcon: Icon(
-                          //   Icons.perm_identity,
-                          //   color: Colors.black,
-                          // ),
-                        ),
-                        maxLines: 1,
-                        controller:
-                            TextEditingController(text: fetchUser["name"]),
-                        onChanged: (value) {
-                          name = value;
-                        },
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Card(
-                    elevation: 3.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
-                      ),
-                      child: TextFormField(
-                        enabled: true,
+                    ListTile(
+                      title: Text(
+                        "1. Customer has sore throat?",
                         style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.black,
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          labelText: "Email Address",
-                          labelStyle:
-                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                          contentPadding: EdgeInsets.all(10.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          hintText: "Enter customer email",
-                          // prefixIcon: Icon(
-                          //   Icons.call,
-                          //   color: Colors.black,
-                          // ),
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        maxLines: 1,
-                        controller:
-                            TextEditingController(text: fetchUser["email"]),
-                        onChanged: (value) {
-                          email = value;
-                        },
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Card(
-                    elevation: 3.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
-                      child: TextFormField(
-                        enabled: true,
+                      trailing: Text(
+                        soreThroat ?? 'No data',
                         style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                         ),
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          labelText: "Phone Number",
-                          labelStyle:
-                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                          contentPadding: EdgeInsets.all(10.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          hintText: "Enter customer phone number",
-                          // prefixIcon: Icon(
-                          //   Icons.call,
-                          //   color: Colors.black,
-                          // ),
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        maxLines: 1,
-                        controller: TextEditingController(
-                                text: fetchUser["phone"]) ??
-                            TextEditingController(text: "No data available"),
-                        onChanged: (value) {
-                          phoneNumber = value;
-                        },
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Card(
-                    elevation: 3.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
-                      ),
-                      child: TextFormField(
+                    SizedBox(height: 5.0),
+                    ListTile(
+                      title: Text(
+                        "2. Customer has headache?",
                         style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.black,
-                        ),
-                        decoration: InputDecoration(
-                          labelText: "Barangay",
-                          labelStyle:
-                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                          contentPadding: EdgeInsets.all(10.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          hintText: "Enter customer barangay",
-                          // prefixIcon: Icon(
-                          //   Icons.call,
-                          //   color: Colors.black,
-                          // ),
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        maxLines: 1,
-                        controller:
-                            TextEditingController(text: fetchUser["barangay"]),
-                        onChanged: (value) {
-                          barangay = value;
-                        },
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  Card(
-                    elevation: 3.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
-                      child: TextFormField(
+                      trailing: Text(
+                        headAche ?? 'No data',
                         style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                         ),
-                        decoration: InputDecoration(
-                          labelText: "Municipality",
-                          labelStyle:
-                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                          contentPadding: EdgeInsets.all(10.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          hintText: "Enter customer municipality",
-                          // prefixIcon: Icon(
-                          //   Icons.call,
-                          //   color: Colors.black,
-                          // ),
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        maxLines: 1,
-                        controller:
-                            TextEditingController(text: fetchUser["city"]),
-                        onChanged: (value) {
-                          municipality = value;
-                        },
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Card(
-                    elevation: 3.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
-                        ),
-                      ),
-                      child: TextFormField(
+                    SizedBox(height: 5.0),
+                    ListTile(
+                      title: Text(
+                        "3. Customer has fever?",
                         style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.black,
-                        ),
-                        decoration: InputDecoration(
-                          labelText: "Province",
-                          labelStyle:
-                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                          contentPadding: EdgeInsets.all(10.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          hintText: "Enter customer province",
-                          // prefixIcon: Icon(
-                          //   Icons.call,
-                          //   color: Colors.black,
-                          // ),
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        maxLines: 1,
-                        controller:
-                            TextEditingController(text: fetchUser["province"]),
-                        onChanged: (value) {
-                          province = value;
-                        },
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.0),
-                  Card(
-                    elevation: 3.0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(5.0),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
                         ),
                       ),
-                      child: TextFormField(
+                      trailing: Text(
+                        fever ?? 'No data',
                         style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.black,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
                         ),
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          labelText: "Temperature",
-                          labelStyle:
-                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                          contentPadding: EdgeInsets.all(10.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.white,
-                            ),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          hintText: "Enter customer temperature",
-                          // prefixIcon: Icon(
-                          //   Icons.call,
-                          //   color: Colors.black,
-                          // ),
-                          hintStyle: TextStyle(
-                            fontSize: 15.0,
-                            color: Colors.black54,
-                          ),
+                      ),
+                    ),
+                    SizedBox(height: 5.0),
+                    ListTile(
+                      title: Text(
+                        "4. Customer has travel history?",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
                         ),
-                        maxLines: 1,
-                        onChanged: (value) {
-                          temperature = value;
-                        },
+                      ),
+                      trailing: Text(
+                        travelHistory ?? 'No data',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 10.0,
-                  ),
-                  // SizedBox(
-                  //   height: 13.0,
-                  //   child: Padding(
-                  //     padding: EdgeInsets.only(left: 10.0),
-                  //     child: Text(
-                  //       "The temperature field is required",
-                  //       style: TextStyle(
-                  //         fontSize: 12,
-                  //         color: Colors.red,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  Container(
-                    alignment: Alignment.topLeft,
-                    margin: EdgeInsets.only(
-                      top: 25.0,
-                      left: 10.0,
-                    ),
-                    child: Text(
-                      "Answers",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).accentColor,
+                    SizedBox(height: 5.0),
+                    ListTile(
+                      title: Text(
+                        "5. Customer has exposure to patient?",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      trailing: Text(
+                        exposure ?? 'No data',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 10.0),
-                  ListTile(
-                    title: Text(
-                      "1. Customer has sore throat?",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
+                    SizedBox(height: 5.0),
+                    ListTile(
+                      title: Text(
+                        "6. Customer has cough or colds?",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      trailing: Text(
+                        cough ?? 'No data',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                    trailing: Text(
-                      soreThroat ?? 'No data',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
+                    SizedBox(height: 5.0),
+                    ListTile(
+                      title: Text(
+                        "7. Customer has body pain?",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w300,
+                        ),
+                      ),
+                      trailing: Text(
+                        bodyPain ?? 'No data',
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(height: 5.0),
-                  ListTile(
-                    title: Text(
-                      "2. Customer has headache?",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    trailing: Text(
-                      headAche ?? 'No data',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 5.0),
-                  ListTile(
-                    title: Text(
-                      "3. Customer has fever?",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    trailing: Text(
-                      fever ?? 'No data',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 5.0),
-                  ListTile(
-                    title: Text(
-                      "4. Customer has travel history?",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    trailing: Text(
-                      travelHistory ?? 'No data',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 5.0),
-                  ListTile(
-                    title: Text(
-                      "5. Customer has exposure to patient?",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    trailing: Text(
-                      exposure ?? 'No data',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 5.0),
-                  ListTile(
-                    title: Text(
-                      "6. Customer has cough or colds?",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    trailing: Text(
-                      cough ?? 'No data',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 5.0),
-                  ListTile(
-                    title: Text(
-                      "7. Customer has body pain?",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w300,
-                      ),
-                    ),
-                    trailing: Text(
-                      bodyPain ?? 'No data',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 80.0),
-                ],
+                    SizedBox(height: 80.0),
+                  ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -934,7 +968,9 @@ class _QuestionsState extends State<Questions> {
                             _checkIfScanned();
                           } else {
                             Navigator.pop(context);
-                            submitSurvey();
+                            if (_formKey.currentState.validate()) {
+                              submitSurvey();
+                            }
                           }
                         })
                   ],

@@ -37,6 +37,8 @@ dependencies:
   percent_indicator: ^2.1.5
   grouped_buttons: ^1.0.4
   twitter_qr_scanner: any
+  geolocator: ^5.1.1
+  geocoder: ^0.2.1
 
 dev_dependencies:
   flutter_test:
