@@ -63,6 +63,8 @@ class _QuestionsState extends State<Questions> {
   var facebook;
   var temperature;
 
+  String errorName;
+
   List<SmartSelectOption<String>> options = [
     SmartSelectOption<String>(value: 'Yes', title: 'Yes'),
     SmartSelectOption<String>(value: 'No', title: 'No'),
@@ -85,6 +87,11 @@ class _QuestionsState extends State<Questions> {
             _isLoading = false;
             fetchUser = body["user"];
             name = fetchUser["name"];
+            email = fetchUser["email"];
+            phoneNumber = fetchUser["phone"];
+            barangay = fetchUser["barangay"];
+            municipality = fetchUser["city"];
+            province = fetchUser["province"];
             gender = fetchUser["sex"];
           });
         } else {
@@ -241,9 +248,75 @@ class _QuestionsState extends State<Questions> {
       'trace_name': name,
       'trace_gender': gender,
       'trace_contact_number': phoneNumber,
+      'trace_barangay': barangay,
+      'trace_municipality': municipality,
+      'trace_province': province,
+      'trace_email': email,
+      'trace_date_time_entry': dateEntry,
+      'trace_question_sore_throat': soreThroat,
+      'trace_question_headache': headAche,
+      'trace_question_fever': fever,
+      'trace_question_travel_history': travelHistory,
+      'trace_question_exposure': exposure,
+      'trace_question_cough_cold': cough,
+      'trace_question_body_pain': bodyPain,
+      'temperature': temperature,
     };
 
     print(data);
+
+    var response = await Network().authData(data, '/tracer');
+    var body = json.decode(response.body);
+    if (body['success']) {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Thanks"),
+              content:
+                  Text("Survey submitted. Thank you for your cooperation!"),
+              actions: <Widget>[
+                new FlatButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return MainScreen();
+                          },
+                        ),
+                      );
+                    }),
+              ],
+            );
+          });
+    } else {
+      setState(() {
+        errorName = body["message"]["name"]
+            .toString()
+            .replaceAll(new RegExp(r'\['), '')
+            .replaceAll(new RegExp(r'\]'), '');
+        if (errorName == "null") {
+          errorName = "";
+        }
+      });
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Failed"),
+              content: Text("Please correct the following error."),
+              actions: <Widget>[
+                new FlatButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+              ],
+            );
+          });
+      print(body);
+    }
   }
 
   @override
@@ -317,7 +390,13 @@ class _QuestionsState extends State<Questions> {
                           Radius.circular(5.0),
                         ),
                       ),
-                      child: TextField(
+                      child: TextFormField(
+                        validator: (errorName) {
+                          if(errorName.isNotEmpty) {
+                            return errorName;
+                          }
+                          return null;
+                        },
                         readOnly: true,
                         style: TextStyle(
                           fontSize: 15.0,
@@ -355,9 +434,8 @@ class _QuestionsState extends State<Questions> {
                           // ),
                         ),
                         maxLines: 1,
-                        controller: TextEditingController(
-                                text: fetchUser["name"]) ??
-                            TextEditingController(text: "No data available"),
+                        controller:
+                            TextEditingController(text: fetchUser["name"]),
                         onChanged: (value) {
                           name = value;
                         },
@@ -374,7 +452,7 @@ class _QuestionsState extends State<Questions> {
                           Radius.circular(5.0),
                         ),
                       ),
-                      child: TextField(
+                      child: TextFormField(
                         enabled: true,
                         style: TextStyle(
                           fontSize: 15.0,
@@ -409,9 +487,8 @@ class _QuestionsState extends State<Questions> {
                           ),
                         ),
                         maxLines: 1,
-                        controller: TextEditingController(
-                                text: fetchUser["email"]) ??
-                            TextEditingController(text: "No data available"),
+                        controller:
+                            TextEditingController(text: fetchUser["email"]),
                         onChanged: (value) {
                           email = value;
                         },
@@ -428,7 +505,7 @@ class _QuestionsState extends State<Questions> {
                           Radius.circular(5.0),
                         ),
                       ),
-                      child: TextField(
+                      child: TextFormField(
                         enabled: true,
                         style: TextStyle(
                           fontSize: 15.0,
@@ -484,7 +561,60 @@ class _QuestionsState extends State<Questions> {
                           Radius.circular(5.0),
                         ),
                       ),
-                      child: TextField(
+                      child: TextFormField(
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          labelText: "Barangay",
+                          labelStyle:
+                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                          contentPadding: EdgeInsets.all(10.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          hintText: "Enter customer barangay",
+                          // prefixIcon: Icon(
+                          //   Icons.call,
+                          //   color: Colors.black,
+                          // ),
+                          hintStyle: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        maxLines: 1,
+                        controller:
+                            TextEditingController(text: fetchUser["barangay"]),
+                        onChanged: (value) {
+                          barangay = value;
+                        },
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Card(
+                    elevation: 3.0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(5.0),
+                        ),
+                      ),
+                      child: TextFormField(
                         style: TextStyle(
                           fontSize: 15.0,
                           color: Colors.black,
@@ -535,7 +665,7 @@ class _QuestionsState extends State<Questions> {
                           Radius.circular(5.0),
                         ),
                       ),
-                      child: TextField(
+                      child: TextFormField(
                         style: TextStyle(
                           fontSize: 15.0,
                           color: Colors.black,
@@ -586,7 +716,7 @@ class _QuestionsState extends State<Questions> {
                           Radius.circular(5.0),
                         ),
                       ),
-                      child: TextField(
+                      child: TextFormField(
                         style: TextStyle(
                           fontSize: 15.0,
                           color: Colors.black,
@@ -626,7 +756,22 @@ class _QuestionsState extends State<Questions> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10.0),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  // SizedBox(
+                  //   height: 13.0,
+                  //   child: Padding(
+                  //     padding: EdgeInsets.only(left: 10.0),
+                  //     child: Text(
+                  //       "The temperature field is required",
+                  //       style: TextStyle(
+                  //         fontSize: 12,
+                  //         color: Colors.red,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Container(
                     alignment: Alignment.topLeft,
                     margin: EdgeInsets.only(
