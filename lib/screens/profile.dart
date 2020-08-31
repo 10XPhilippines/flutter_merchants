@@ -396,7 +396,7 @@ class _ProfileState extends State<Profile> {
                 ),
               ),
               subtitle: Text(
-                profile["city"] + ', ' + profile["province"] ?? "No data available",
+               profile["province"] ?? "No data available",
               ),
             ),
             ListTile(
