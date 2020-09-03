@@ -9,6 +9,9 @@
 - [X] <s>Scan QR code of user, get survey data embedded in dynamically generated QR.</s>
 - [X] <s>Temperature field</s>
 - [x] <s>Save to database scanned survey</s>
+- [ ] Refactor REST api (default.png)
+- [ ] Refactor button state during login/registration
+- [ ] Change app icon
 - [ ] Add list view history of scanned QR per businness
 
 ## 🔖 LICENCE
