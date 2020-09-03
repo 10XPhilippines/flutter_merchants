@@ -9,6 +9,7 @@ import 'package:flutter_merchants/screens/login.dart';
 import 'package:flutter_merchants/screens/otp.dart';
 import 'package:flutter_merchants/screens/change_email.dart';
 import 'package:flutter_merchants/screens/default_business.dart';
+import 'package:flutter_merchants/screens/history.dart';
 import 'package:flutter_merchants/util/const.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
@@ -482,6 +483,43 @@ class _ProfileState extends State<Profile> {
                     MaterialPageRoute(
                       builder: (BuildContext context) {
                         return DefaultBusinessScreen();
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+            Divider(),
+            ListTile(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (BuildContext context) {
+                      return HistoryScreen();
+                    },
+                  ),
+                );
+              },
+              title: Text(
+                "History",
+                style: TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              subtitle: Text(
+                'View list of scanned customer',
+              ),
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.history,
+                  size: 20.0,
+                ),
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (BuildContext context) {
+                        return HistoryScreen();
                       },
                     ),
                   );
