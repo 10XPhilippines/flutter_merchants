@@ -68,12 +68,12 @@ class _DefaultBusinessScreenState extends State<DefaultBusinessScreen> {
           _isLoading = false;
         });
         final snackBar = SnackBar(
-          duration: Duration(seconds: 5),
+          duration: Duration(minutes: 5),
           content: Container(
               height: 40.0,
               child: Center(
                 child: Text(
-                  'Network is unreachable',
+                  'There is no business yet.',
                   style: TextStyle(fontSize: 16.0),
                 ),
               )),
@@ -219,11 +219,36 @@ class _DefaultBusinessScreenState extends State<DefaultBusinessScreen> {
                   SizedBox(
                     height: 10,
                   ),
-                  RadioButtonGroup(
-                    labels: businessList,
-                    picked: picked,
-                    onSelected: (String business) => save(business),
-                  ),
+                  businessList.length != 0
+                      ? RadioButtonGroup(
+                          labels: businessList,
+                          picked: picked,
+                          onSelected: (String business) => save(business),
+                        )
+                      : Center(
+                          child: Padding(
+                            padding: EdgeInsets.all(100),
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: <Widget>[
+                                Image.asset(
+                                  'assets/empty.png',
+                                  height: 100,
+                                ),
+                                SizedBox(height: 10,),
+                                Text(
+                                  "Such an empty!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.black54,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                 ],
         ),
       ),

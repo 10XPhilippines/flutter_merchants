@@ -9,6 +9,7 @@ import 'package:flutter_merchants/screens/home.dart';
 import 'package:flutter_merchants/screens/notifications.dart';
 import 'package:flutter_merchants/screens/profile.dart';
 import 'package:flutter_merchants/screens/search.dart';
+import 'package:flutter_merchants/screens/history.dart';
 import 'package:flutter_merchants/util/const.dart';
 import 'package:flutter_merchants/widgets/badge.dart';
 import 'package:flutter_merchants/screens/questions.dart';
@@ -113,6 +114,7 @@ class _MainScreenState extends State<MainScreen> {
           onPageChanged: onPageChanged,
           children: <Widget>[
             Profile(),
+            HistoryScreen(),
             Home(),
             FavoriteScreen(),
             SearchScreen(),
@@ -126,6 +128,28 @@ class _MainScreenState extends State<MainScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               SizedBox(width: 7),
+              IconButton(
+                icon: Icon(
+                  Icons.person,
+                  size: 24.0,
+                ),
+                color: _page == 4
+                    ? Theme.of(context).accentColor
+                    : Theme.of(context).textTheme.caption.color,
+                onPressed: () => _pageController.jumpToPage(0),
+              ),
+
+              IconButton(
+                icon: Icon(
+                  Icons.track_changes,
+                  size: 24.0,
+                ),
+                color: _page == 4
+                    ? Theme.of(context).accentColor
+                    : Theme.of(context).textTheme.caption.color,
+                onPressed: () => _pageController.jumpToPage(1),
+              ),
+              
               // IconButton(
               //   icon: Icon(
               //     Icons.home,
