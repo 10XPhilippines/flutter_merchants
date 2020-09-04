@@ -17,7 +17,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
   var email;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _email = new TextEditingController();
-
+  bool _isLoading = false;
   String validateEmail = "Enter your email";
 
   _checkIfConnected() async {
@@ -44,13 +44,34 @@ class _ForgotScreenState extends State<ForgotScreen> {
   }
 
   void reset() async {
+    setState(() {
+      _isLoading = true;
+    });
     var data = {'email': email};
     print(data);
 
-    var res = await Network().authData(data, '/reset');
+    var res = await Network().authData(data, '/reset_password');
     var body = json.decode(res.body);
     if (body['success']) {
-      print(body);
+      setState(() {
+        _email.clear();
+        _isLoading = false;
+      });
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Success"),
+              content: Text(body['message']),
+              actions: <Widget>[
+                new FlatButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }),
+              ],
+            );
+          });
     } else {
       showDialog(
           context: context,
@@ -68,6 +89,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
             );
           });
       setState(() {
+        _isLoading = false;
         validateEmail = body["message"]["email"]
             .toString()
             .replaceAll(new RegExp(r'\['), '')
@@ -107,61 +129,92 @@ class _ForgotScreenState extends State<ForgotScreen> {
         padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
         child: ListView(
           shrinkWrap: true,
-          children: <Widget>[
-            SizedBox(
-              height: 10.0,
-            ),
-            Card(
-              elevation: 3.0,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(5.0),
+          children: _isLoading
+              ? <Widget>[
+                  SizedBox(
+                    height: 50,
                   ),
-                ),
-                child: TextField(
-                  enabled: true,
-                  style: TextStyle(
-                    fontSize: 15.0,
-                    color: Colors.black,
+                  Center(
+                    child: SizedBox(
+                      child: CircularProgressIndicator(
+                        backgroundColor: Colors.white,
+                        strokeWidth: 2.0,
+                      ),
+                      height: 15.0,
+                      width: 15.0,
+                    ),
+                  )
+                ]
+              : <Widget>[
+                  Container(
+                    alignment: Alignment.topLeft,
+                    margin: EdgeInsets.only(
+                      top: 25.0,
+                      left: 10.0,
+                    ),
+                    child: Text(
+                      "We will send a password reset link to your email.",
+                      style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54),
+                    ),
                   ),
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    labelText: "Email Address",
-                    labelStyle: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                    contentPadding: EdgeInsets.all(10.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Card(
+                    elevation: 3.0,
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Colors.white,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(5.0),
+                        ),
+                      ),
+                      child: TextField(
+                        enabled: true,
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          labelText: "Email Address",
+                          labelStyle:
+                              TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                          contentPadding: EdgeInsets.all(10.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.white,
+                            ),
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          hintText: validateEmail ?? "Enter your email",
+                          // prefixIcon: Icon(
+                          //   Icons.call,
+                          //   color: Colors.black,
+                          // ),
+                          hintStyle: TextStyle(
+                            fontSize: 15.0,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        maxLines: 1,
+                        controller: _email,
+                        onChanged: (value) {
+                          email = value;
+                        },
                       ),
                     ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                      ),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    hintText: validateEmail ?? "Enter your email",
-                    // prefixIcon: Icon(
-                    //   Icons.call,
-                    //   color: Colors.black,
-                    // ),
-                    hintStyle: TextStyle(
-                      fontSize: 15.0,
-                      color: Colors.black54,
-                    ),
                   ),
-                  maxLines: 1,
-                  controller: _email,
-                  onChanged: (value) {
-                    email = value;
-                  },
-                ),
-              ),
-            ),
-          ],
+                ],
         ),
       ),
       floatingActionButton: FloatingActionButton.extended(

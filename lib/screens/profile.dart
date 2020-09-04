@@ -254,7 +254,7 @@ class _ProfileState extends State<Profile> {
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Text(
-                                  profile["name"] ?? "No data available",
+                                  profile["name"] ?? "No data",
                                   style: TextStyle(
                                     fontSize: 20.0,
                                     fontWeight: FontWeight.bold,
@@ -274,7 +274,7 @@ class _ProfileState extends State<Profile> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
                                 Text(
-                                  profile["email"] ?? "No data available",
+                                  profile["email"] ?? "No data",
                                   style: TextStyle(
                                     fontSize: 14.0,
                                     fontWeight: FontWeight.bold,
