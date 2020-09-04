@@ -95,7 +95,7 @@ class _ForgotScreenState extends State<ForgotScreen> {
             .replaceAll(new RegExp(r'\['), '')
             .replaceAll(new RegExp(r'\]'), '');
         if (validateEmail == "null") {
-          validateEmail = "Enter your name";
+          validateEmail = "Enter your email";
         }
       });
     }
