@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-//import 'package:qrscan/qrscan.dart' as scanner;
 import 'package:flutter_merchants/network_utils/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_select/smart_select.dart';
@@ -402,6 +401,7 @@ class _QuestionsState extends State<Questions> {
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.camera),
+            iconSize: 20.0,
             onPressed: () {
               // _scan();
               Navigator.of(context)

@@ -2,15 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_merchants/providers/app_provider.dart';
 import 'package:flutter_merchants/screens/splash.dart';
-import 'package:flutter_merchants/screens/login.dart';
 import 'package:flutter_merchants/screens/otp.dart';
-import 'package:flutter_merchants/screens/change_email.dart';
 import 'package:flutter_merchants/screens/default_business.dart';
-import 'package:flutter_merchants/screens/history.dart';
-import 'package:flutter_merchants/util/const.dart';
+import 'package:flutter_merchants/screens/survey.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
 
@@ -928,6 +923,43 @@ class _ProfileState extends State<Profile> {
                           MaterialPageRoute(
                             builder: (BuildContext context) {
                               return DefaultBusinessScreen();
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Divider(),
+                  ListTile(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return SurveyScreen();
+                          },
+                        ),
+                      );
+                    },
+                    title: Text(
+                      "Survey Form",
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Answer surveys and generate QR',
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.question_answer,
+                        size: 20.0,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return SurveyScreen();
                             },
                           ),
                         );

@@ -5,9 +5,10 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
-import 'package:grouped_buttons/grouped_buttons.dart';
+import 'package:intl/intl.dart';
 import 'package:toast/toast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HistoryScreen extends StatefulWidget {
   @override
@@ -15,9 +16,11 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  Future<void> _launched;
   Uint8List bytes = Uint8List(0);
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   bool _isLoading = false;
+  bool _isLoading2 = false;
   bool hasConnection = false;
   Map business = {};
   bool defaultBusiness;
@@ -28,14 +31,152 @@ class _HistoryScreenState extends State<HistoryScreen> {
   String picked;
   int userId;
   List businessId = [];
+  List companion = [];
   List<String> businessList = [];
   String message;
+  DateFormat formatter = DateFormat.yMMMMd().add_jm();
 
   @override
   void initState() {
     getProfile();
     _checkIfConnected();
     super.initState();
+  }
+
+  getCompanion(String companionCode) async {
+    setState(() {
+      _isLoading2 = true;
+    });
+    debugPrint("Get companion: " + companionCode);
+    try {
+      var res =
+          await Network().getData('/get_companion_by_id/' + companionCode);
+      var body = json.decode(res.body);
+      if (body['success']) {
+        setState(() {
+          companion = body["companion"];
+          _isLoading2 = false;
+        });
+        debugPrint("si companion");
+        print(companion);
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading2 = true;
+      });
+      print(e.toString());
+    }
+    setState(() {
+      _isLoading2 = true;
+    });
+    showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+      ),
+      context: context,
+      builder: (builder) {
+        return new Container(
+          height: 250.0,
+          color: Colors.transparent,
+          child: _isLoading
+              ? Center(
+                  child: SizedBox(
+                    child: CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                      strokeWidth: 2.0,
+                    ),
+                    height: 15.0,
+                    width: 15.0,
+                  ),
+                )
+              : Container(
+                  alignment: Alignment.topLeft,
+                  margin: EdgeInsets.only(
+                    left: 20.0,
+                    top: 20.0,
+                    right: 20.0,
+                  ),
+                  child: ListView(children: <Widget>[
+                    companion.length != 0
+                        ? Container(
+                            child: Text("List of companions"),
+                            margin: EdgeInsets.only(
+                              left: 15.0,
+                              top: 5.0,
+                              bottom: 5.0,
+                              right: 15.0,
+                            ),
+                          )
+                        : Text(""),
+                    companion.length != 0
+                        ? ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: companion == null ? 0 : companion.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return new ListTile(
+                                title: Text(
+                                  companion[index]["companion_first_name"] +
+                                      ' ' +
+                                      companion[index]["companion_last_name"] +
+                                      ', ' +
+                                      companion[index]
+                                          ["companion_temperature"] +
+                                      "°",
+                                  style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                    '${companion[index]["companion_street"]}, ${companion[index]["companion_barangay"]}, ${companion[index]["companion_municipality"]}, ${companion[index]["companion_province"]}'),
+                                trailing: IconButton(
+                                  icon: Icon(
+                                    Icons.call,
+                                    color: Colors.redAccent,
+                                    size: 20.0,
+                                  ),
+                                  onPressed: () => setState(() {
+                                    _launched = _makePhoneCall(
+                                        'tel:$companion[index]["companion_contact_number"]');
+                                    print(companion[index]
+                                        ["companion_contact_number"]);
+                                  }),
+                                ),
+                              );
+                            })
+                        : Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: <Widget>[
+                                  Image.asset(
+                                    'assets/empty.png',
+                                    height: 100,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "Such an empty!",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                  ]),
+                ),
+        );
+      },
+    );
   }
 
   getProfile() async {
@@ -45,6 +186,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
       business = json.decode(data);
       userId = int.parse(business["id"].toString());
     });
+  }
+
+  Future<void> _makePhoneCall(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   getHistory() async {
@@ -271,7 +420,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       child: merchant == null
                           ? Text("")
                           : Text(
-                              "History of scanned customer in $merchant business. Tap to view details.",
+                              "History of scanned customer in $merchant business. Tap to view more details.",
                               style: TextStyle(
                                   fontSize: 15.0,
                                   fontWeight: FontWeight.w500,
@@ -288,6 +437,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             itemCount: history == null ? 0 : history.length,
                             itemBuilder: (BuildContext context, int index) {
                               return new ListTile(
+                                dense: false,
                                 title: Text(
                                   history[index]["trace_name"],
                                   style: TextStyle(
@@ -295,8 +445,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
+                                trailing: IconButton(
+                                  icon: Icon(
+                                    Icons.call,
+                                    color: Colors.orangeAccent,
+                                    size: 20.0,
+                                  ),
+                                  onPressed: () {
+                                    _launched = _makePhoneCall(
+                                        'tel:${history[index]["trace_contact_number"]}');
+                                  },
+                                ),
                                 subtitle: Text(
-                                    '${history[index]["trace_barangay"]}, ${history[index]["trace_municipality"]}, ${history[index]["trace_province"]}'),
+                                    '${history[index]["trace_barangay"]}, ${history[index]["trace_municipality"]}, ${history[index]["trace_province"]}\nVisited on ' +
+                                        formatter.format(DateTime.parse(
+                                            history[index]
+                                                ["trace_date_time_entry"]))),
                                 onTap: () {
                                   print(history[index]["id"]);
                                   showModalBottomSheet(
@@ -314,7 +478,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                               alignment: Alignment.topLeft,
                                               margin: EdgeInsets.only(
                                                 left: 20.0,
-                                                top: 20.0,
+                                                top: 15.0,
                                                 right: 20.0,
                                               ),
                                               child: ListView(
@@ -322,7 +486,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                   ListTile(
                                                     title: Text(
                                                       history[index]
-                                                          ["trace_name"],
+                                                              ["trace_name"] +
+                                                          '\'s Trace Details',
                                                       style: TextStyle(
                                                         fontSize: 17,
                                                         fontWeight:
@@ -335,51 +500,55 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                     ),
                                                     trailing: IconButton(
                                                       icon: Icon(
-                                                        Icons.close,
-                                                        size: 18.0,
+                                                        Icons
+                                                            .supervised_user_circle_outlined,
+                                                        size: 25.0,
                                                       ),
                                                       onPressed: () {
                                                         Navigator.pop(context);
+                                                        getCompanion(history[
+                                                                index][
+                                                            "tracers_companion_code"]);
                                                       },
                                                     ),
                                                   ),
-                                                  SizedBox(height: 10),
-                                                  ListTile(
-                                                    title: Text(
-                                                      "Contact Number",
-                                                      style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    subtitle: Text(
-                                                      history[index][
-                                                          "trace_contact_number"],
-                                                    ),
-                                                    trailing: IconButton(
-                                                      icon: Icon(
-                                                        Icons.content_copy,
-                                                        size: 18.0,
-                                                      ),
-                                                      onPressed: () {
-                                                        Clipboard.setData(
-                                                            new ClipboardData(
-                                                                text: history[
-                                                                        index][
-                                                                    "trace_contact_number"]));
-                                                        Toast.show(
-                                                            "Copied to clipboard.",
-                                                            context,
-                                                            duration: Toast
-                                                                .LENGTH_SHORT,
-                                                            gravity:
-                                                                Toast.BOTTOM);
-                                                      },
-                                                    ),
-                                                  ),
+                                                  // ListTile(
+                                                  //   title: Text(
+                                                  //     "Contact Number",
+                                                  //     style: TextStyle(
+                                                  //       fontSize: 15,
+                                                  //       fontWeight:
+                                                  //           FontWeight.w500,
+                                                  //     ),
+                                                  //   ),
+                                                  //   subtitle: Text(
+                                                  //     history[index][
+                                                  //         "trace_contact_number"],
+                                                  //   ),
+                                                  //   trailing: IconButton(
+                                                  //     icon: Icon(
+                                                  //       Icons.content_copy,
+                                                  //       size: 18.0,
+                                                  //     ),
+                                                  //     onPressed: () {
+                                                  //       Clipboard.setData(
+                                                  //           new ClipboardData(
+                                                  //               text: history[
+                                                  //                       index][
+                                                  //                   "trace_contact_number"]));
+                                                  //       Toast.show(
+                                                  //           "Copied to clipboard.",
+                                                  //           context,
+                                                  //           duration: Toast
+                                                  //               .LENGTH_SHORT,
+                                                  //           gravity:
+                                                  //               Toast.BOTTOM);
+                                                  //     },
+                                                  //   ),
+                                                  // ),
                                                   Divider(),
                                                   ListTile(
+                                                    dense: true,
                                                     contentPadding:
                                                         EdgeInsets.only(
                                                             right: 25,
@@ -394,7 +563,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                     ),
                                                     trailing: Text(
                                                       history[index]
-                                                          ["temperature"],
+                                                              ["temperature"] +
+                                                          '°',
                                                     ),
                                                   ),
                                                   Divider(),
