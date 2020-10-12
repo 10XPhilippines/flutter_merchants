@@ -13,6 +13,8 @@
 - [X] <s>Refactor button state during login/registration</s>
 - [X] <s>Change app icon</s>
 - [X] <s>Add list view history of scanned QR per businness</s>
+- [X] <s>Add survey questions in merchant app</s>
+- [ ] Add visited establishments with companion
 
 ## 🔖 LICENCE
 [Apache-2.0](https://github.com/isaacdarcilla/flutter_merchants/blob/master/LICENSE)
