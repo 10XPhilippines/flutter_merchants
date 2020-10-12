@@ -95,13 +95,13 @@ class _MainScreenState extends State<MainScreen> {
                 size: 22.0,
               ),
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (BuildContext context) {
-                      return Notifications();
-                    },
-                  ),
-                );
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (BuildContext context) {
+                //       return Notifications();
+                //     },
+                //   ),
+                // );
               },
               tooltip: "Notifications",
             ),
@@ -141,7 +141,7 @@ class _MainScreenState extends State<MainScreen> {
 
               IconButton(
                 icon: Icon(
-                  Icons.track_changes,
+                  Icons.people_alt,
                   size: 24.0,
                 ),
                 color: _page == 4

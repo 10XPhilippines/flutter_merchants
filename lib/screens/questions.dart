@@ -26,6 +26,9 @@ String cough = "-";
 String exposure = "-";
 String travelHistory = "-";
 String bodyPain = "-";
+String companionCode;
+
+List companion = [];
 
 bool _isLoading = false;
 bool hasConnection = false;
@@ -36,9 +39,6 @@ class Questions extends StatefulWidget {
 }
 
 class _QuestionsState extends State<Questions> {
-  final TextEditingController _phoneControl = new TextEditingController();
-  final TextEditingController _nameControl = new TextEditingController();
-  final TextEditingController _emailControl = new TextEditingController();
   GlobalKey qrKey = GlobalKey();
   QRViewController controller;
   final _formKey = GlobalKey<FormState>();
@@ -75,6 +75,51 @@ class _QuestionsState extends State<Questions> {
 
   DateTime now = DateTime.now();
 
+  clearFields() async {
+    setState(() {
+      name;
+      email;
+      phoneNumber;
+      street;
+      barangay;
+      municipality;
+      province;
+      gender;
+      facebook;
+      temperature;
+      userIdFetch = "";
+      dateEntry = "";
+      dateExit = "";
+      soreThroat = "-";
+      headAche = "-";
+      fever = "-";
+      cough = "-";
+      exposure = "-";
+      travelHistory = "-";
+      bodyPain = "-";
+      companionCode = "";
+      companion = [];
+    });
+  }
+
+  getCompanion(String companionCode) async {
+    debugPrint("Get companion");
+    try {
+      var res =
+          await Network().getData('/get_companion_by_id/' + companionCode);
+      var body = json.decode(res.body);
+      if (body['success']) {
+        setState(() {
+          companion = body["companion"];
+        });
+        debugPrint("si companion");
+        print(companion);
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   fetchUserData() async {
     if (hasQrValue == true) {
       setState(() {
@@ -92,9 +137,10 @@ class _QuestionsState extends State<Questions> {
             name = fetchUser["name"];
             email = fetchUser["email"];
             phoneNumber = fetchUser["phone"];
-            // barangay = fetchUser["barangay"];
-            // municipality = fetchUser["city"];
-            // province = fetchUser["province"];
+            barangay = fetchUser["barangay"];
+            municipality = fetchUser["city"];
+            province = fetchUser["province"];
+            street = fetchUser["street"];
             gender = fetchUser["sex"];
           });
         } else {
@@ -231,32 +277,12 @@ class _QuestionsState extends State<Questions> {
     setState(() {
       barcode = "";
     });
+
     fetchUserData();
-    _getLocation();
+    getCompanion(companionCode);
+    // _getLocation();
+
     super.initState();
-  }
-
-  _getLocation() async {
-    Position position = await Geolocator()
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    debugPrint('location: ${position.latitude}');
-
-    final coordinates = new Coordinates(position.latitude, position.longitude);
-    debugPrint('coordinates is: $coordinates');
-
-    var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
-    var first = addresses.first;
-
-    setState(() {
-      barangay = first.thoroughfare;
-      municipality = first.locality;
-      province = first.subAdminArea;
-    });
-
-    print(first.thoroughfare);
-    print(first.locality);
-    print(first.subAdminArea);
   }
 
   getProfile() async {
@@ -273,11 +299,11 @@ class _QuestionsState extends State<Questions> {
       'user_id': userIdFetch,
       'business_id': defaultMerchant,
       'name': name,
-      'gender': gender,
       'contact_number': phoneNumber,
       'barangay': barangay,
       'municipality': municipality,
       'province': province,
+      'region': street,
       'email': email,
       'date_time_entry': dateEntry,
       'question_sore_throat': soreThroat,
@@ -288,6 +314,8 @@ class _QuestionsState extends State<Questions> {
       'question_cough_cold': cough,
       'question_body_pain': bodyPain,
       'temperature': temperature,
+      'companion_code': companionCode,
+      'qr_data': qrText,
     };
 
     print(data);
@@ -306,6 +334,7 @@ class _QuestionsState extends State<Questions> {
                 new FlatButton(
                     child: const Text('OK'),
                     onPressed: () {
+                      clearFields();
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (BuildContext context) {
@@ -407,7 +436,8 @@ class _QuestionsState extends State<Questions> {
                 : <Widget>[
                     Container(
                       alignment: Alignment.topLeft,
-                      margin: EdgeInsets.only(top: 25.0, left: 10.0),
+                      margin:
+                          EdgeInsets.only(top: 25.0, left: 10.0, bottom: 15.0),
                       child: Text(
                         "Customer Data",
                         style: TextStyle(
@@ -811,6 +841,57 @@ class _QuestionsState extends State<Questions> {
                       alignment: Alignment.topLeft,
                       margin: EdgeInsets.only(
                         left: 10.0,
+                        top: 15.0,
+                        bottom: 15.0,
+                      ),
+                      child: Text(
+                        "Customer Companion",
+                        style: TextStyle(
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ),
+                    Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(
+                          left: 10.0,
+                          top: 10.0,
+                          bottom: 5.0,
+                        ),
+                        child: companion.length == 0
+                            ? Text(
+                                "No companion added.",
+                                style: TextStyle(
+                                  fontSize: 14.0,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black45,
+                                ),
+                              )
+                            : ListView.builder(
+                                shrinkWrap: true,
+                                itemCount:
+                                    companion == null ? 0 : companion.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return new Text(
+                                    "${companion[index]['companion_first_name']} ${companion[index]['companion_last_name']}, ${companion[index]['companion_temperature']}°",
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black45,
+                                    ),
+                                  );
+                                })),
+                    SizedBox(
+                      height: 10.0,
+                    ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(
+                        left: 10.0,
+                        top: 15.0,
+                        bottom: 15.0,
                       ),
                       child: Text(
                         "Customer Survey",
@@ -821,12 +902,28 @@ class _QuestionsState extends State<Questions> {
                         ),
                       ),
                     ),
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(
+                        left: 10.0,
+                        top: 10.0,
+                        bottom: 15.0,
+                      ),
+                      child: Text(
+                        "All information submitted shall be encrypted, and strictly used only in compliance to the Philippine law, guidelines, and ordinances, in relation to business operation in light of COVID-19 responses.",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black45,
+                        ),
+                      ),
+                    ),
                     ListTile(
                       title: Text(
-                        "1. Customer has sore throat?",
+                        "Customer has sore throat?",
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       trailing: Text(
@@ -840,10 +937,10 @@ class _QuestionsState extends State<Questions> {
                     SizedBox(height: 5.0),
                     ListTile(
                       title: Text(
-                        "2. Customer has headache?",
+                        "Customer has headache?",
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       trailing: Text(
@@ -857,10 +954,10 @@ class _QuestionsState extends State<Questions> {
                     SizedBox(height: 5.0),
                     ListTile(
                       title: Text(
-                        "3. Customer has fever?",
+                        "Customer has fever?",
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       trailing: Text(
@@ -874,10 +971,10 @@ class _QuestionsState extends State<Questions> {
                     SizedBox(height: 5.0),
                     ListTile(
                       title: Text(
-                        "4. Customer has travel history?",
+                        "Customer has travel history?",
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       trailing: Text(
@@ -891,10 +988,10 @@ class _QuestionsState extends State<Questions> {
                     SizedBox(height: 5.0),
                     ListTile(
                       title: Text(
-                        "5. Customer has exposure to patient?",
+                        "Customer has exposure to patient?",
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       trailing: Text(
@@ -908,10 +1005,10 @@ class _QuestionsState extends State<Questions> {
                     SizedBox(height: 5.0),
                     ListTile(
                       title: Text(
-                        "6. Customer has cough or colds?",
+                        "Customer has cough or colds?",
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       trailing: Text(
@@ -925,10 +1022,10 @@ class _QuestionsState extends State<Questions> {
                     SizedBox(height: 5.0),
                     ListTile(
                       title: Text(
-                        "7. Customer has body pain?",
+                        "Customer has body pain?",
                         style: TextStyle(
                           fontSize: 15,
-                          fontWeight: FontWeight.w300,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       trailing: Text(
@@ -1003,6 +1100,7 @@ class _QRExampleState extends State<QRExample> {
   @override
   void initState() {
     getProfile();
+
     super.initState();
   }
 
@@ -1055,12 +1153,14 @@ class _QRExampleState extends State<QRExample> {
       exposure = list[6];
       cough = list[7];
       bodyPain = list[8];
+      companionCode = list[9];
     });
   }
 
   void _onQRViewCreate(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
+      print(scanData);
       setState(() {
         qrText = scanData;
         hasQrValue = true;

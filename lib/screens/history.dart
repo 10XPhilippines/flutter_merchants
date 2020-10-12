@@ -241,319 +241,331 @@ class _HistoryScreenState extends State<HistoryScreen> {
       // ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
-        child: ListView(
-          shrinkWrap: true,
-          children: _isLoading
-              ? <Widget>[
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Center(
-                    child: SizedBox(
-                      child: CircularProgressIndicator(
-                        backgroundColor: Colors.white,
-                        strokeWidth: 2.0,
+        child: SingleChildScrollView(
+          physics: ScrollPhysics(),
+          child: Column(
+            children: _isLoading
+                ? <Widget>[
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Center(
+                      child: SizedBox(
+                        child: CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                          strokeWidth: 2.0,
+                        ),
+                        height: 15.0,
+                        width: 15.0,
                       ),
-                      height: 15.0,
-                      width: 15.0,
+                    )
+                  ]
+                : <Widget>[
+                    Container(
+                      alignment: Alignment.topLeft,
+                      margin: EdgeInsets.only(
+                        top: 25.0,
+                        left: 15.0,
+                        right: 15.0,
+                      ),
+                      child: merchant == null
+                          ? Text("")
+                          : Text(
+                              "History of scanned customer in $merchant business. Tap to view details.",
+                              style: TextStyle(
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black54),
+                            ),
                     ),
-                  )
-                ]
-              : <Widget>[
-                  Container(
-                    alignment: Alignment.topLeft,
-                    margin: EdgeInsets.only(
-                      top: 25.0,
-                      left: 10.0,
+                    SizedBox(
+                      height: 10,
                     ),
-                    child: merchant == null
-                        ? Text("")
-                        : Text(
-                            "History of scanned customer in $merchant business.",
-                            style: TextStyle(
-                                fontSize: 15.0,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black54),
-                          ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  history.length != 0
-                      ? ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: history == null ? 0 : history.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return new ListTile(
-                              title: Text(
-                                history[index]["trace_name"],
-                                style: TextStyle(
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              subtitle: Text(
-                                  '${history[index]["trace_barangay"]}, ${history[index]["trace_municipality"]}, ${history[index]["trace_province"]}'),
-                              onTap: () {
-                                print(history[index]["id"]);
-                                showModalBottomSheet(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(20),
-                                          topRight: Radius.circular(20)),
-                                    ),
-                                    context: context,
-                                    builder: (builder) {
-                                      return new Container(
-                                        height: 400.0,
-                                        color: Colors.transparent,
-                                        child: Container(
-                                            alignment: Alignment.topLeft,
-                                            margin: EdgeInsets.only(
-                                              left: 20.0,
-                                              top: 20.0,
-                                              right: 20.0,
-                                            ),
-                                            child: ListView(
-                                              children: <Widget>[
-                                                ListTile(
-                                                  title: Text(
-                                                    history[index]
-                                                        ["trace_name"],
-                                                    style: TextStyle(
-                                                      fontSize: 17,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                  subtitle: Text(
-                                                    history[index]
-                                                        ["trace_email"],
-                                                  ),
-                                                  trailing: IconButton(
-                                                    icon: Icon(
-                                                      Icons.close,
-                                                      size: 18.0,
-                                                    ),
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                  ),
-                                                ),
-                                                SizedBox(height: 10),
-                                                ListTile(
-                                                  title: Text(
-                                                    "Contact Number",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  subtitle: Text(
-                                                    history[index][
-                                                        "trace_contact_number"],
-                                                  ),
-                                                  trailing: IconButton(
-                                                    icon: Icon(
-                                                      Icons.content_copy,
-                                                      size: 18.0,
-                                                    ),
-                                                    onPressed: () {
-                                                      Clipboard.setData(
-                                                          new ClipboardData(
-                                                              text: history[
-                                                                      index][
-                                                                  "trace_contact_number"]));
-                                                      Toast.show(
-                                                          "Copied to clipboard.",
-                                                          context,
-                                                          duration: Toast
-                                                              .LENGTH_SHORT,
-                                                          gravity:
-                                                              Toast.BOTTOM);
-                                                    },
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          right: 25, left: 18),
-                                                  title: Text(
-                                                    "Temperature",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  trailing: Text(
-                                                    history[index]
-                                                        ["temperature"],
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          right: 25, left: 18),
-                                                  title: Text(
-                                                    "Has sorethroat?",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  trailing: Text(
-                                                    history[index][
-                                                        "trace_question_sore_throat"],
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          right: 25, left: 18),
-                                                  title: Text(
-                                                    "Has headache?",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  trailing: Text(
-                                                    history[index][
-                                                        "trace_question_headache"],
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          right: 25, left: 18),
-                                                  title: Text(
-                                                    "Has fever?",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  trailing: Text(
-                                                    history[index][
-                                                        "trace_question_fever"],
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          right: 25, left: 18),
-                                                  title: Text(
-                                                    "Has cough or colds?",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  trailing: Text(
-                                                    history[index][
-                                                        "trace_question_cough_cold"],
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          right: 25, left: 18),
-                                                  title: Text(
-                                                    "Has exposure?",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  trailing: Text(
-                                                    history[index][
-                                                        "trace_question_exposure"],
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          right: 25, left: 18),
-                                                  title: Text(
-                                                    "Has travel history?",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  trailing: Text(
-                                                    history[index][
-                                                        "trace_question_travel_history"],
-                                                  ),
-                                                ),
-                                                Divider(),
-                                                ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.only(
-                                                          right: 25, left: 18),
-                                                  title: Text(
-                                                    "Has body pain?",
-                                                    style: TextStyle(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  trailing: Text(
-                                                    history[index][
-                                                        "trace_question_body_pain"],
-                                                  ),
-                                                ),
-                                              ],
-                                            )),
-                                      );
-                                    });
-                              },
-                            );
-                          },
-                        )
-                      : Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(100),
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: <Widget>[
-                                Image.asset(
-                                  'assets/empty.png',
-                                  height: 100,
-                                ),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  "Such an empty!",
-                                  textAlign: TextAlign.center,
+                    history.length != 0
+                        ? ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: history == null ? 0 : history.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return new ListTile(
+                                title: Text(
+                                  history[index]["trace_name"],
                                   style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black54,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                              ],
+                                subtitle: Text(
+                                    '${history[index]["trace_barangay"]}, ${history[index]["trace_municipality"]}, ${history[index]["trace_province"]}'),
+                                onTap: () {
+                                  print(history[index]["id"]);
+                                  showModalBottomSheet(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(20),
+                                            topRight: Radius.circular(20)),
+                                      ),
+                                      context: context,
+                                      builder: (builder) {
+                                        return new Container(
+                                          height: 400.0,
+                                          color: Colors.transparent,
+                                          child: Container(
+                                              alignment: Alignment.topLeft,
+                                              margin: EdgeInsets.only(
+                                                left: 20.0,
+                                                top: 20.0,
+                                                right: 20.0,
+                                              ),
+                                              child: ListView(
+                                                children: <Widget>[
+                                                  ListTile(
+                                                    title: Text(
+                                                      history[index]
+                                                          ["trace_name"],
+                                                      style: TextStyle(
+                                                        fontSize: 17,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                    ),
+                                                    subtitle: Text(
+                                                      history[index]
+                                                          ["trace_email"],
+                                                    ),
+                                                    trailing: IconButton(
+                                                      icon: Icon(
+                                                        Icons.close,
+                                                        size: 18.0,
+                                                      ),
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                  ListTile(
+                                                    title: Text(
+                                                      "Contact Number",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    subtitle: Text(
+                                                      history[index][
+                                                          "trace_contact_number"],
+                                                    ),
+                                                    trailing: IconButton(
+                                                      icon: Icon(
+                                                        Icons.content_copy,
+                                                        size: 18.0,
+                                                      ),
+                                                      onPressed: () {
+                                                        Clipboard.setData(
+                                                            new ClipboardData(
+                                                                text: history[
+                                                                        index][
+                                                                    "trace_contact_number"]));
+                                                        Toast.show(
+                                                            "Copied to clipboard.",
+                                                            context,
+                                                            duration: Toast
+                                                                .LENGTH_SHORT,
+                                                            gravity:
+                                                                Toast.BOTTOM);
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 25,
+                                                            left: 18),
+                                                    title: Text(
+                                                      "Temperature",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    trailing: Text(
+                                                      history[index]
+                                                          ["temperature"],
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 25,
+                                                            left: 18),
+                                                    title: Text(
+                                                      "Has sorethroat?",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    trailing: Text(
+                                                      history[index][
+                                                          "trace_question_sore_throat"],
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 25,
+                                                            left: 18),
+                                                    title: Text(
+                                                      "Has headache?",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    trailing: Text(
+                                                      history[index][
+                                                          "trace_question_headache"],
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 25,
+                                                            left: 18),
+                                                    title: Text(
+                                                      "Has fever?",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    trailing: Text(
+                                                      history[index][
+                                                          "trace_question_fever"],
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 25,
+                                                            left: 18),
+                                                    title: Text(
+                                                      "Has cough or colds?",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    trailing: Text(
+                                                      history[index][
+                                                          "trace_question_cough_cold"],
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 25,
+                                                            left: 18),
+                                                    title: Text(
+                                                      "Has exposure?",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    trailing: Text(
+                                                      history[index][
+                                                          "trace_question_exposure"],
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 25,
+                                                            left: 18),
+                                                    title: Text(
+                                                      "Has travel history?",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    trailing: Text(
+                                                      history[index][
+                                                          "trace_question_travel_history"],
+                                                    ),
+                                                  ),
+                                                  Divider(),
+                                                  ListTile(
+                                                    contentPadding:
+                                                        EdgeInsets.only(
+                                                            right: 25,
+                                                            left: 18),
+                                                    title: Text(
+                                                      "Has body pain?",
+                                                      style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                    trailing: Text(
+                                                      history[index][
+                                                          "trace_question_body_pain"],
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                        );
+                                      });
+                                },
+                              );
+                            },
+                          )
+                        : Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(100),
+                              child: ListView(
+                                shrinkWrap: true,
+                                children: <Widget>[
+                                  Image.asset(
+                                    'assets/empty.png',
+                                    height: 100,
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    "Such an empty!",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                ],
+                  ],
+          ),
         ),
       ),
       // floatingActionButton: FloatingActionButton.extended(
