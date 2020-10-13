@@ -11,6 +11,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_merchants/models/province.dart';
+import 'package:flutter_merchants/models/city.dart';
+import 'package:flutter_merchants/models/barangay.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -25,6 +27,7 @@ class _ProfileState extends State<Profile> {
   final TextEditingController m = TextEditingController();
   final TextEditingController s = TextEditingController();
   Map profile = {};
+  bool showData = false;
   String data = "";
   int userId = 0;
   String isVerified = "0";
@@ -202,6 +205,19 @@ class _ProfileState extends State<Profile> {
       fn = body["user"]["first_name"];
       ln = body["user"]["last_name"];
     });
+
+    if (body["user"]["barangay"] == null ||
+        body["user"]["city"] == null ||
+        body["user"]["province"] == null ||
+        body["user"]["street"] == null) { 
+          setState(() {
+            showData = false;
+          });
+        } else {
+          setState(() {
+            showData = true;
+          });
+        }
   }
 
   updateProfile() async {
@@ -220,6 +236,7 @@ class _ProfileState extends State<Profile> {
       var res = await Network().authData(data, '/update_profile');
       var body = json.decode(res.body);
       if (body['success'] == true) {
+        print(body);
         Navigator.pop(context);
         getUserData(userId.toString());
         final snackBar = SnackBar(
@@ -404,7 +421,7 @@ class _ProfileState extends State<Profile> {
                           color: Colors.black54,
                         ),
                       ),
-                      controller:  p,
+                      controller: p,
                     ),
                     suggestionsCallback: (pattern) {
                       return ProvinceService.getSuggestions(pattern);
@@ -431,12 +448,50 @@ class _ProfileState extends State<Profile> {
                     onSaved: (value) => this.p.text = value,
                   ),
                   SizedBox(height: 15.0),
-                  new TextFormField(
-                    initialValue: m.text,
-                    textInputAction: TextInputAction.next,
-                    autofocus: false,
-                    onChanged: (value) {
-                      m.text = value;
+                  new TypeAheadFormField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      decoration: InputDecoration(
+                        labelText: "City / Municipality",
+                        labelStyle:
+                            TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                        contentPadding: EdgeInsets.all(10.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        hintText: "Enter your city or municipality",
+                        // prefixIcon: Icon(
+                        //   Icons.perm_identity,
+                        //   color: Colors.black,
+                        // ),
+                        hintStyle: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      controller: m,
+                    ),
+                    suggestionsCallback: (pattern) {
+                      return CitiesService.getSuggestions(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion),
+                      );
+                    },
+                    transitionBuilder: (context, suggestionsBox, controller) {
+                      return suggestionsBox;
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      this.m.text = suggestion;
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -446,41 +501,53 @@ class _ProfileState extends State<Profile> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
-                      labelText: "City / Municipality",
-                      labelStyle:
-                          TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                      contentPadding: EdgeInsets.all(10.0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      hintText: "Enter your municipality",
-                      // prefixIcon: Icon(
-                      //   Icons.perm_identity,
-                      //   color: Colors.black,
-                      // ),
-                      hintStyle: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.black54,
-                      ),
-                    ),
+                    onSaved: (value) => this.m.text = value,
                   ),
                   SizedBox(height: 15.0),
-                  new TextFormField(
-                    initialValue: b.text,
-                    textInputAction: TextInputAction.next,
-                    autofocus: false,
-                    onChanged: (value) {
-                      b.text = value;
+                  new TypeAheadFormField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      decoration: InputDecoration(
+                        labelText: "Barangay",
+                        labelStyle:
+                            TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                        contentPadding: EdgeInsets.all(10.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        hintText: "Enter your barangay",
+                        // prefixIcon: Icon(
+                        //   Icons.perm_identity,
+                        //   color: Colors.black,
+                        // ),
+                        hintStyle: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      controller: b,
+                    ),
+                    suggestionsCallback: (pattern) {
+                      return BarangayService.getSuggestions(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion),
+                      );
+                    },
+                    transitionBuilder: (context, suggestionsBox, controller) {
+                      return suggestionsBox;
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      this.b.text = suggestion;
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -490,33 +557,7 @@ class _ProfileState extends State<Profile> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
-                      labelText: "Barangay",
-                      labelStyle:
-                          TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                      contentPadding: EdgeInsets.all(10.0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      hintText: "Enter your barangay",
-                      // prefixIcon: Icon(
-                      //   Icons.perm_identity,
-                      //   color: Colors.black,
-                      // ),
-                      hintStyle: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.black54,
-                      ),
-                    ),
+                    onSaved: (value) => this.b.text = value,
                   ),
                   SizedBox(height: 15.0),
                   new TextFormField(
@@ -646,6 +687,7 @@ class _ProfileState extends State<Profile> {
   Widget build(BuildContext context) {
     _context = context;
     return Scaffold(
+      key: _scaffoldKey,
       body: Padding(
         padding: EdgeInsets.fromLTRB(10.0, 0, 10.0, 0),
         child: ListView(
@@ -863,9 +905,9 @@ class _ProfileState extends State<Profile> {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    subtitle: Text(
-                      "${s.text}, ${b.text}, ${m.text}, ${p.text}" ?? "No data available",
-                    ),
+                    subtitle: showData ? Text(
+                      "${s.text}, ${b.text}, ${m.text}, ${p.text}"
+                    ) : Text("No data available"),
                   ),
                   // ListTile(
                   //   title: Text(

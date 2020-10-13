@@ -3,10 +3,9 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
 import 'package:intl/intl.dart';
-import 'package:toast/toast.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -483,6 +482,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                               ),
                                               child: ListView(
                                                 children: <Widget>[
+                                                  Center(
+                                                      child: QrImage(
+                                                    data: history[index]
+                                                        ["qr_data"],
+                                                    version: QrVersions.auto,
+                                                    size: 180.0,
+                                                  )),
                                                   ListTile(
                                                     title: Text(
                                                       history[index]

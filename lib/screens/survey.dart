@@ -9,6 +9,10 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smart_select/smart_select.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter_merchants/models/province.dart';
+import 'package:flutter_merchants/models/city.dart';
+import 'package:flutter_merchants/models/barangay.dart';
 
 class SurveyScreen extends StatefulWidget {
   @override
@@ -19,6 +23,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
   String bytes;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController p = TextEditingController();
+  final TextEditingController b = TextEditingController();
+  final TextEditingController m = TextEditingController();
+  final TextEditingController s = TextEditingController();
   Map profile = {};
   bool _isLoading = false;
   String data;
@@ -44,7 +52,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
   String companionTemperature;
   String companionBarangay;
   String e1, e2, e3, e4, e5, e6, e7, e8;
-  String b, m, p, s, pn;
+  String pn;
   bool hasAddress;
   var rawJson = ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7'];
 
@@ -87,10 +95,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
         body["user"]["phone"] == null) {
       setState(() {
         hasAddress = false;
-        b = body["user"]["barangay"];
-        p = body["user"]["province"];
-        m = body["user"]["city"];
-        s = body["user"]["street"];
+        b.text = body["user"]["barangay"];
+        p.text = body["user"]["province"];
+        m.text = body["user"]["city"];
+        s.text = body["user"]["street"];
         pn = body["user"]["phone"];
       });
     } else {
@@ -110,10 +118,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
     });
     var data = {
       'user_id': userId,
-      'barangay': b,
-      'city': m,
-      'province': p,
-      'street': s,
+      'barangay': b.text,
+      'city': m.text,
+      'province': p.text,
+      'street': s.text,
       'phone': pn,
     };
     print(data);
@@ -304,12 +312,51 @@ class _SurveyScreenState extends State<SurveyScreen> {
                           ),
                         ),
                         SizedBox(height: 20.0),
-                        new TextFormField(
-                          initialValue: p,
-                          textInputAction: TextInputAction.next,
-                          autofocus: true,
-                          onChanged: (value) {
-                            p = value;
+                        new TypeAheadFormField(
+                          textFieldConfiguration: TextFieldConfiguration(
+                            decoration: InputDecoration(
+                              labelText: "Province",
+                              labelStyle: TextStyle(
+                                  color: Color.fromRGBO(0, 0, 0, 0.5)),
+                              contentPadding: EdgeInsets.all(10.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              hintText: "Enter your province",
+                              // prefixIcon: Icon(
+                              //   Icons.perm_identity,
+                              //   color: Colors.black,
+                              // ),
+                              hintStyle: TextStyle(
+                                fontSize: 15.0,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            controller: p,
+                          ),
+                          suggestionsCallback: (pattern) {
+                            return ProvinceService.getSuggestions(pattern);
+                          },
+                          itemBuilder: (context, suggestion) {
+                            return ListTile(
+                              title: Text(suggestion),
+                            );
+                          },
+                          transitionBuilder:
+                              (context, suggestionsBox, controller) {
+                            return suggestionsBox;
+                          },
+                          onSuggestionSelected: (suggestion) {
+                            this.p.text = suggestion;
                           },
                           validator: (value) {
                             if (value.isEmpty) {
@@ -319,41 +366,54 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             }
                             return null;
                           },
-                          decoration: InputDecoration(
-                            labelText: "Province",
-                            labelStyle:
-                                TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                            contentPadding: EdgeInsets.all(10.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            hintText: "Enter your province",
-                            // prefixIcon: Icon(
-                            //   Icons.perm_identity,
-                            //   color: Colors.black,
-                            // ),
-                            hintStyle: TextStyle(
-                              fontSize: 15.0,
-                              color: Colors.black54,
-                            ),
-                          ),
+                          onSaved: (value) => this.p.text = value,
                         ),
                         SizedBox(height: 15.0),
-                        new TextFormField(
-                          initialValue: m,
-                          textInputAction: TextInputAction.next,
-                          autofocus: false,
-                          onChanged: (value) {
-                            m = value;
+                        new TypeAheadFormField(
+                          textFieldConfiguration: TextFieldConfiguration(
+                            decoration: InputDecoration(
+                              labelText: "City / Municipality",
+                              labelStyle: TextStyle(
+                                  color: Color.fromRGBO(0, 0, 0, 0.5)),
+                              contentPadding: EdgeInsets.all(10.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              hintText: "Enter your city or municipality",
+                              // prefixIcon: Icon(
+                              //   Icons.perm_identity,
+                              //   color: Colors.black,
+                              // ),
+                              hintStyle: TextStyle(
+                                fontSize: 15.0,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            controller: m,
+                          ),
+                          suggestionsCallback: (pattern) {
+                            return CitiesService.getSuggestions(pattern);
+                          },
+                          itemBuilder: (context, suggestion) {
+                            return ListTile(
+                              title: Text(suggestion),
+                            );
+                          },
+                          transitionBuilder:
+                              (context, suggestionsBox, controller) {
+                            return suggestionsBox;
+                          },
+                          onSuggestionSelected: (suggestion) {
+                            this.m.text = suggestion;
                           },
                           validator: (value) {
                             if (value.isEmpty) {
@@ -363,41 +423,54 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             }
                             return null;
                           },
-                          decoration: InputDecoration(
-                            labelText: "City / Municipality",
-                            labelStyle:
-                                TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                            contentPadding: EdgeInsets.all(10.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            hintText: "Enter your municipality",
-                            // prefixIcon: Icon(
-                            //   Icons.perm_identity,
-                            //   color: Colors.black,
-                            // ),
-                            hintStyle: TextStyle(
-                              fontSize: 15.0,
-                              color: Colors.black54,
-                            ),
-                          ),
+                          onSaved: (value) => this.m.text = value,
                         ),
                         SizedBox(height: 15.0),
-                        new TextFormField(
-                          initialValue: b,
-                          textInputAction: TextInputAction.next,
-                          autofocus: false,
-                          onChanged: (value) {
-                            b = value;
+                        new TypeAheadFormField(
+                          textFieldConfiguration: TextFieldConfiguration(
+                            decoration: InputDecoration(
+                              labelText: "Barangay",
+                              labelStyle: TextStyle(
+                                  color: Color.fromRGBO(0, 0, 0, 0.5)),
+                              contentPadding: EdgeInsets.all(10.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.white,
+                                ),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              hintText: "Enter your barangay",
+                              // prefixIcon: Icon(
+                              //   Icons.perm_identity,
+                              //   color: Colors.black,
+                              // ),
+                              hintStyle: TextStyle(
+                                fontSize: 15.0,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            controller: b,
+                          ),
+                          suggestionsCallback: (pattern) {
+                            return BarangayService.getSuggestions(pattern);
+                          },
+                          itemBuilder: (context, suggestion) {
+                            return ListTile(
+                              title: Text(suggestion),
+                            );
+                          },
+                          transitionBuilder:
+                              (context, suggestionsBox, controller) {
+                            return suggestionsBox;
+                          },
+                          onSuggestionSelected: (suggestion) {
+                            this.b.text = suggestion;
                           },
                           validator: (value) {
                             if (value.isEmpty) {
@@ -407,41 +480,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
                             }
                             return null;
                           },
-                          decoration: InputDecoration(
-                            labelText: "Barangay",
-                            labelStyle:
-                                TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                            contentPadding: EdgeInsets.all(10.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            hintText: "Enter your barangay",
-                            // prefixIcon: Icon(
-                            //   Icons.perm_identity,
-                            //   color: Colors.black,
-                            // ),
-                            hintStyle: TextStyle(
-                              fontSize: 15.0,
-                              color: Colors.black54,
-                            ),
-                          ),
+                          onSaved: (value) => this.b.text = value,
                         ),
                         SizedBox(height: 15.0),
                         new TextFormField(
-                          initialValue: s,
+                          initialValue: s.text,
                           textInputAction: TextInputAction.next,
                           autofocus: false,
                           onChanged: (value) {
-                            s = value;
+                            s.text = value;
                           },
                           validator: (value) {
                             if (value.isEmpty) {
