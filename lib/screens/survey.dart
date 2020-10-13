@@ -27,6 +27,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
   final TextEditingController b = TextEditingController();
   final TextEditingController m = TextEditingController();
   final TextEditingController s = TextEditingController();
+  final TextEditingController companionProvince = TextEditingController();
+  final TextEditingController companionCity = TextEditingController();
+  final TextEditingController companionStreet = TextEditingController();
+  final TextEditingController companionBarangay = TextEditingController();
   Map profile = {};
   bool _isLoading = false;
   String data;
@@ -45,12 +49,8 @@ class _SurveyScreenState extends State<SurveyScreen> {
   int companionId;
   String companionFirstName;
   String companionLastName;
-  String companionProvince;
-  String companionCity;
-  String companionStreet;
   String companionPhoneNumber;
   String companionTemperature;
-  String companionBarangay;
   String e1, e2, e3, e4, e5, e6, e7, e8;
   String pn;
   bool hasAddress;
@@ -181,10 +181,10 @@ class _SurveyScreenState extends State<SurveyScreen> {
       'user_id': userId,
       'companion_first_name': companionFirstName,
       'companion_last_name': companionLastName,
-      'companion_street': companionStreet,
-      'companion_barangay': companionBarangay,
-      'companion_municipality': companionCity,
-      'companion_province': companionProvince,
+      'companion_street': companionStreet.text,
+      'companion_barangay': companionBarangay.text,
+      'companion_municipality': companionCity.text,
+      'companion_province': companionProvince.text,
       'companion_temperature': companionTemperature,
       'companion_contact_number': companionPhoneNumber,
       'companion_code': companionId,
@@ -713,11 +713,50 @@ class _SurveyScreenState extends State<SurveyScreen> {
                   ),
                 ),
                 SizedBox(height: 15.0),
-                new TextFormField(
-                  textInputAction: TextInputAction.next,
-                  autofocus: false,
-                  onChanged: (value) {
-                    companionProvince = value;
+                new TypeAheadFormField(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    decoration: InputDecoration(
+                      labelText: "Province",
+                      labelStyle:
+                          TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                      contentPadding: EdgeInsets.all(10.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      hintText: "Enter companion province",
+                      // prefixIcon: Icon(
+                      //   Icons.perm_identity,
+                      //   color: Colors.black,
+                      // ),
+                      hintStyle: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    controller: companionProvince,
+                  ),
+                  suggestionsCallback: (pattern) {
+                    return ProvinceService.getSuggestions(pattern);
+                  },
+                  itemBuilder: (context, suggestion) {
+                    return ListTile(
+                      title: Text(suggestion),
+                    );
+                  },
+                  transitionBuilder: (context, suggestionsBox, controller) {
+                    return suggestionsBox;
+                  },
+                  onSuggestionSelected: (suggestion) {
+                    this.companionProvince.text = suggestion;
                   },
                   validator: (value) {
                     if (value.isEmpty) {
@@ -727,39 +766,53 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     }
                     return null;
                   },
-                  decoration: InputDecoration(
-                    labelText: "Province",
-                    labelStyle: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                    contentPadding: EdgeInsets.all(10.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                      ),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    hintText: "Enter companion province",
-                    // prefixIcon: Icon(
-                    //   Icons.perm_identity,
-                    //   color: Colors.black,
-                    // ),
-                    hintStyle: TextStyle(
-                      fontSize: 15.0,
-                      color: Colors.black54,
-                    ),
-                  ),
+                  onSaved: (value) => this.companionProvince.text = value,
                 ),
                 SizedBox(height: 15.0),
-                new TextFormField(
-                  textInputAction: TextInputAction.next,
-                  autofocus: false,
-                  onChanged: (value) {
-                    companionCity = value;
+                new TypeAheadFormField(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    decoration: InputDecoration(
+                      labelText: "City / Municipality",
+                      labelStyle:
+                          TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                      contentPadding: EdgeInsets.all(10.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      hintText: "Enter companion city or municipality",
+                      // prefixIcon: Icon(
+                      //   Icons.perm_identity,
+                      //   color: Colors.black,
+                      // ),
+                      hintStyle: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    controller: companionCity,
+                  ),
+                  suggestionsCallback: (pattern) {
+                    return CitiesService.getSuggestions(pattern);
+                  },
+                  itemBuilder: (context, suggestion) {
+                    return ListTile(
+                      title: Text(suggestion),
+                    );
+                  },
+                  transitionBuilder: (context, suggestionsBox, controller) {
+                    return suggestionsBox;
+                  },
+                  onSuggestionSelected: (suggestion) {
+                    this.companionCity.text = suggestion;
                   },
                   validator: (value) {
                     if (value.isEmpty) {
@@ -769,39 +822,53 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     }
                     return null;
                   },
-                  decoration: InputDecoration(
-                    labelText: "City / Municipality",
-                    labelStyle: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                    contentPadding: EdgeInsets.all(10.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                      ),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    hintText: "Enter companion municipality",
-                    // prefixIcon: Icon(
-                    //   Icons.perm_identity,
-                    //   color: Colors.black,
-                    // ),
-                    hintStyle: TextStyle(
-                      fontSize: 15.0,
-                      color: Colors.black54,
-                    ),
-                  ),
+                  onSaved: (value) => this.companionCity.text = value,
                 ),
                 SizedBox(height: 15.0),
-                new TextFormField(
-                  textInputAction: TextInputAction.next,
-                  autofocus: false,
-                  onChanged: (value) {
-                    companionBarangay = value;
+                new TypeAheadFormField(
+                  textFieldConfiguration: TextFieldConfiguration(
+                    decoration: InputDecoration(
+                      labelText: "Barangay",
+                      labelStyle:
+                          TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                      contentPadding: EdgeInsets.all(10.0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                      hintText: "Enter companion barangay",
+                      // prefixIcon: Icon(
+                      //   Icons.perm_identity,
+                      //   color: Colors.black,
+                      // ),
+                      hintStyle: TextStyle(
+                        fontSize: 15.0,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    controller: companionBarangay,
+                  ),
+                  suggestionsCallback: (pattern) {
+                    return BarangayService.getSuggestions(pattern);
+                  },
+                  itemBuilder: (context, suggestion) {
+                    return ListTile(
+                      title: Text(suggestion),
+                    );
+                  },
+                  transitionBuilder: (context, suggestionsBox, controller) {
+                    return suggestionsBox;
+                  },
+                  onSuggestionSelected: (suggestion) {
+                    this.companionBarangay.text = suggestion;
                   },
                   validator: (value) {
                     if (value.isEmpty) {
@@ -811,39 +878,15 @@ class _SurveyScreenState extends State<SurveyScreen> {
                     }
                     return null;
                   },
-                  decoration: InputDecoration(
-                    labelText: "Barangay",
-                    labelStyle: TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                    contentPadding: EdgeInsets.all(10.0),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                      ),
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    hintText: "Enter companion barangay",
-                    // prefixIcon: Icon(
-                    //   Icons.perm_identity,
-                    //   color: Colors.black,
-                    // ),
-                    hintStyle: TextStyle(
-                      fontSize: 15.0,
-                      color: Colors.black54,
-                    ),
-                  ),
+                  onSaved: (value) => this.companionBarangay.text = value,
                 ),
                 SizedBox(height: 15.0),
                 new TextFormField(
+                  initialValue: companionStreet.text,
                   textInputAction: TextInputAction.next,
                   autofocus: false,
                   onChanged: (value) {
-                    companionStreet = value;
+                    companionStreet.text = value;
                   },
                   validator: (value) {
                     if (value.isEmpty) {

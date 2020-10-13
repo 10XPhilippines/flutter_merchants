@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -375,6 +376,53 @@ class _VisitScreenState extends State<VisitScreen> {
                                 getCompanion(
                                     history[index]["tracers_companion_code"]);
                               },
+                              trailing: IconButton(
+                                icon: Icon(
+                                  Icons.qr_code,
+                                  size: 20.0,
+                                ),
+                                onPressed: () {
+                                  print("QR");
+                                  showModalBottomSheet(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(20),
+                                          topRight: Radius.circular(20)),
+                                    ),
+                                    context: context,
+                                    builder: (builder) {
+                                      return new Container(
+                                        height: 250.0,
+                                        color: Colors.transparent,
+                                        child: Container(
+                                          alignment: Alignment.topLeft,
+                                          margin: EdgeInsets.only(
+                                            left: 20.0,
+                                            top: 20.0,
+                                            right: 20.0,
+                                          ),
+                                          child: ListView(
+                                            children: <Widget>[
+                                              Center(
+                                                child: Text("Dynamic QR code"),
+                                              ),
+                                              Center(
+                                                child: QrImage(
+                                                  data: history[index]
+                                                      ["qr_data"],
+                                                  version: QrVersions.auto,
+                                                  size: 200.0,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                tooltip: "Edit",
+                              ),
                             );
                           },
                         )
