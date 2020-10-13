@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'dart:ui';
-import 'package:flutter_merchants/screens/questions.dart';
+import 'package:flutter_merchants/screens/visits.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -977,13 +975,13 @@ class _SurveyScreenState extends State<SurveyScreen> {
         elevation: 0.0,
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.track_changes),
+            icon: Icon(Icons.history),
             iconSize: 20,
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (BuildContext context) {
-                    return Questions();
+                    return VisitScreen();
                   },
                 ),
               );

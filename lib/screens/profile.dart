@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_merchants/screens/splash.dart';
@@ -8,6 +9,8 @@ import 'package:flutter_merchants/screens/default_business.dart';
 import 'package:flutter_merchants/screens/survey.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:flutter_merchants/models/province.dart';
 
 class Profile extends StatefulWidget {
   @override
@@ -17,6 +20,10 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final TextEditingController p = TextEditingController();
+  final TextEditingController b = TextEditingController();
+  final TextEditingController m = TextEditingController();
+  final TextEditingController s = TextEditingController();
   Map profile = {};
   String data = "";
   int userId = 0;
@@ -27,7 +34,8 @@ class _ProfileState extends State<Profile> {
   bool _isLoading = false;
   String userType;
   String image;
-  String b, m, p, s, pn, fn, ln;
+  String pn, fn, ln;
+  List<dynamic> responseProvinces;
 
   getProfile() async {
     setState(() {
@@ -46,6 +54,12 @@ class _ProfileState extends State<Profile> {
       _isLoading = false;
     });
     getUserData(userId.toString());
+  }
+
+  loadProvince() async {
+    String data = await rootBundle.loadString('assets/province.json');
+    responseProvinces = json.decode(data);
+    print(responseProvinces);
   }
 
   resendOtp() async {
@@ -171,6 +185,7 @@ class _ProfileState extends State<Profile> {
     print("Initstate");
     getProfile();
     _checkIfConnected();
+
     super.initState();
   }
 
@@ -179,10 +194,10 @@ class _ProfileState extends State<Profile> {
     var body = json.decode(res.body);
     print(body);
     setState(() {
-      b = body["user"]["barangay"];
-      p = body["user"]["province"];
-      m = body["user"]["city"];
-      s = body["user"]["street"];
+      b.text = body["user"]["barangay"];
+      p.text = body["user"]["province"];
+      m.text = body["user"]["city"];
+      s.text = body["user"]["street"];
       pn = body["user"]["phone"];
       fn = body["user"]["first_name"];
       ln = body["user"]["last_name"];
@@ -194,10 +209,10 @@ class _ProfileState extends State<Profile> {
       'user_id': userId,
       'first_name': fn,
       'last_name': ln,
-      'barangay': b,
-      'city': m,
-      'province': p,
-      'street': s,
+      'barangay': b.text,
+      'city': m.text,
+      'province': p.text,
+      'street': s.text,
       'phone': pn,
     };
     print(data);
@@ -360,12 +375,50 @@ class _ProfileState extends State<Profile> {
                     ),
                   ),
                   SizedBox(height: 15.0),
-                  new TextFormField(
-                    initialValue: p,
-                    textInputAction: TextInputAction.next,
-                    autofocus: true,
-                    onChanged: (value) {
-                      p = value;
+                  new TypeAheadFormField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      decoration: InputDecoration(
+                        labelText: "Province",
+                        labelStyle:
+                            TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                        contentPadding: EdgeInsets.all(10.0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white,
+                          ),
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                        hintText: "Enter your province",
+                        // prefixIcon: Icon(
+                        //   Icons.perm_identity,
+                        //   color: Colors.black,
+                        // ),
+                        hintStyle: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      controller:  p,
+                    ),
+                    suggestionsCallback: (pattern) {
+                      return ProvinceService.getSuggestions(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion),
+                      );
+                    },
+                    transitionBuilder: (context, suggestionsBox, controller) {
+                      return suggestionsBox;
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      this.p.text = suggestion;
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -375,41 +428,15 @@ class _ProfileState extends State<Profile> {
                       }
                       return null;
                     },
-                    decoration: InputDecoration(
-                      labelText: "Province",
-                      labelStyle:
-                          TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                      contentPadding: EdgeInsets.all(10.0),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5.0),
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                        borderRadius: BorderRadius.circular(5.0),
-                      ),
-                      hintText: "Enter your province",
-                      // prefixIcon: Icon(
-                      //   Icons.perm_identity,
-                      //   color: Colors.black,
-                      // ),
-                      hintStyle: TextStyle(
-                        fontSize: 15.0,
-                        color: Colors.black54,
-                      ),
-                    ),
+                    onSaved: (value) => this.p.text = value,
                   ),
                   SizedBox(height: 15.0),
                   new TextFormField(
-                    initialValue: m,
+                    initialValue: m.text,
                     textInputAction: TextInputAction.next,
                     autofocus: false,
                     onChanged: (value) {
-                      m = value;
+                      m.text = value;
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -449,11 +476,11 @@ class _ProfileState extends State<Profile> {
                   ),
                   SizedBox(height: 15.0),
                   new TextFormField(
-                    initialValue: b,
+                    initialValue: b.text,
                     textInputAction: TextInputAction.next,
                     autofocus: false,
                     onChanged: (value) {
-                      b = value;
+                      b.text = value;
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -493,11 +520,11 @@ class _ProfileState extends State<Profile> {
                   ),
                   SizedBox(height: 15.0),
                   new TextFormField(
-                    initialValue: s,
+                    initialValue: s.text,
                     textInputAction: TextInputAction.next,
                     autofocus: false,
                     onChanged: (value) {
-                      s = value;
+                      s.text = value;
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -837,7 +864,7 @@ class _ProfileState extends State<Profile> {
                       ),
                     ),
                     subtitle: Text(
-                      "$s, $b, $m, $p" ?? "No data available",
+                      "${s.text}, ${b.text}, ${m.text}, ${p.text}" ?? "No data available",
                     ),
                   ),
                   // ListTile(
