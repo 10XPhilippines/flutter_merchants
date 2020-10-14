@@ -51,7 +51,7 @@ class _ProfileState extends State<Profile> {
       userType = profile["user_type"];
       isVerified = profile["is_verified"].toString();
       userId = int.parse(profile["id"].toString());
-      path = Network().qrCode() + "/code/" + profile["user_barcode_path"];
+      // path = Network().qrCode() + "/code/" + profile["user_barcode_path"];
       image = Network().qrCode() + profile["image"];
       print(image);
       _isLoading = false;

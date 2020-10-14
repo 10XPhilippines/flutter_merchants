@@ -1117,7 +1117,7 @@ class _QRExampleState extends State<QRExample> {
               borderWidth: 10,
               cutOutSize: 250),
           onQRViewCreated: _onQRViewCreate,
-          data: profile["user_barcode_name"],
+          data: profile["verification"],
         ));
   }
 

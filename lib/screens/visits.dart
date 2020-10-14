@@ -49,6 +49,16 @@ class _VisitScreenState extends State<VisitScreen> {
     }
   }
 
+  String toTitleCase(String str) {
+    return str
+        .replaceAllMapped(
+            RegExp(
+                r'[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+'),
+            (Match m) =>
+                "${m[0][0].toUpperCase()}${m[0].substring(1).toLowerCase()}")
+        .replaceAll(RegExp(r'(_|-)+'), ' ');
+  }
+
   getProfile() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     data = preferences.getString("user");
@@ -181,7 +191,7 @@ class _VisitScreenState extends State<VisitScreen> {
                             })
                         : Center(
                             child: Padding(
-                              padding: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(20),
                               child: ListView(
                                 shrinkWrap: true,
                                 children: <Widget>[
@@ -193,7 +203,7 @@ class _VisitScreenState extends State<VisitScreen> {
                                     height: 10,
                                   ),
                                   Text(
-                                    "Such an empty!",
+                                    "No companion added!",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 12,
@@ -369,7 +379,7 @@ class _VisitScreenState extends State<VisitScreen> {
                                 ),
                               ),
                               subtitle: Text(
-                                '${history[index]["business_city_location"]}, ${history[index]["business_province_location"]}\nVisited on ${history[index]["trace_date_time_entry"]}\n',
+                                '${toTitleCase(history[index]["business_address"])}\nVisited on ${history[index]["trace_date_time_entry"]}\n',
                               ),
                               onTap: () {
                                 print(history[index]["tracers_companion_code"]);
@@ -404,7 +414,8 @@ class _VisitScreenState extends State<VisitScreen> {
                                           child: ListView(
                                             children: <Widget>[
                                               Center(
-                                                child: Text("Dynamic QR code"),
+                                                child: Text(
+                                                    "Scan to view dynamic QR"),
                                               ),
                                               Center(
                                                 child: QrImage(

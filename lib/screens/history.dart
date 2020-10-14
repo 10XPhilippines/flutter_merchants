@@ -147,7 +147,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             })
                         : Center(
                             child: Padding(
-                              padding: EdgeInsets.all(10),
+                              padding: EdgeInsets.all(20),
                               child: ListView(
                                 shrinkWrap: true,
                                 children: <Widget>[
@@ -159,7 +159,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     height: 10,
                                   ),
                                   Text(
-                                    "Such an empty!",
+                                    "No companion added!",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 12,
