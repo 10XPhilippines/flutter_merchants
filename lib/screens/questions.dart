@@ -102,12 +102,15 @@ class _QuestionsState extends State<Questions> {
   }
 
   getCompanion(String companionCode) async {
-    debugPrint("Get companion");
+    debugPrint("Get companion pota");
+    print(userIdFetch.toString());
+    print(companionCode);
     try {
       var res =
-          await Network().getData('/get_companion_by_id/' + companionCode);
+          await Network().getData('/get_companion_by_user_id/'+ userIdFetch.toString() + '/' + companionCode);
       var body = json.decode(res.body);
       if (body['success']) {
+        print(body);
         setState(() {
           companion = body["companion"];
         });
@@ -129,7 +132,7 @@ class _QuestionsState extends State<Questions> {
         var body = json.decode(res.body);
         if (body['success']) {
           print("Debug user");
-          print(body);
+          
           setState(() {
             _isLoading = false;
             fetchUser = body["user"];
@@ -391,7 +394,10 @@ class _QuestionsState extends State<Questions> {
           icon: Icon(
             Icons.keyboard_backspace,
           ),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () {
+            Navigator.pop(context);
+            clearFields();
+          },
         ),
         centerTitle: true,
         title: Text(
