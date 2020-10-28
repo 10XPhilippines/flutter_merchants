@@ -23,12 +23,12 @@ class _JoinAppState extends State<JoinApp> with SingleTickerProviderStateMixin {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        leading: IconButton(
-          icon: Icon(
-            Icons.keyboard_backspace,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
+        // leading: IconButton(
+        //   icon: Icon(
+        //     Icons.keyboard_backspace,
+        //   ),
+        //   onPressed: () => Navigator.pop(context),
+        // ),
         // leading: IconButton(
         //   icon: Icon(
         //     Icons.keyboard_backspace,
