@@ -18,6 +18,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen>
     with AutomaticKeepAliveClientMixin<ProfileScreen> {
   Map profile = {};
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   getProfile() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -38,20 +39,34 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     super.build(context);
     return Scaffold(
+      key: _scaffoldKey,
       body: Padding(
-        padding: EdgeInsets.fromLTRB(20.0, 60.0, 20.0, 0),
-        child: Row(
+        padding: EdgeInsets.fromLTRB(20.0, 30.0, 20.0, 0),
+        child: ListView(
           children: <Widget>[
-            Card(
-              semanticContainer: true,
-              color: Color.fromRGBO(236, 138, 92, 1),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              elevation: 0,
-              margin: EdgeInsets.all(10),
-            ),
+            FlatButton(
+                height: 300,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                color: Color.fromRGBO(236, 138, 92, 1),
+                textColor: Colors.white,
+                padding: EdgeInsets.all(8.0),
+                onPressed: () {},
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Center(
+                        child: Text(
+                          "User Profile",
+                          style: TextStyle(
+                              color: Color.fromRGBO(21, 26, 70, 1),
+                              fontSize: 25,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ),
+                    ])),
           ],
         ),
       ),
