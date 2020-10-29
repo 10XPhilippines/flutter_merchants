@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
-import 'package:flutter_merchants/screens/visits.dart';
+import 'package:flutter_merchants/screens/screen_scanned.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -13,6 +13,8 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_merchants/models/province.dart';
 import 'package:flutter_merchants/models/city.dart';
 import 'package:flutter_merchants/models/barangay.dart';
+import 'package:twitter_qr_scanner/twitter_qr_scanner.dart';
+import 'package:twitter_qr_scanner/QrScannerOverlayShape.dart';
 
 class GenerateScreen extends StatefulWidget {
   @override
@@ -21,6 +23,7 @@ class GenerateScreen extends StatefulWidget {
 
 class _GenerateScreenState extends State<GenerateScreen> {
   String bytes;
+  var qrText;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController p = TextEditingController();
@@ -244,6 +247,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
     setState(() {
       isDone = true;
     });
+    print(this.bytes);
   }
 
   Future _generateBarCode(String inputCode) async {
@@ -1128,7 +1132,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                     ))
                   : Center(
                       child: Icon(Icons.qr_code,
-                          size: 220, color: Color.fromRGBO(234, 86, 86, 1)),
+                          size: 210, color: Color.fromRGBO(234, 86, 86, 1)),
                     ),
             ),
             // SizedBox(
@@ -1227,7 +1231,9 @@ class _GenerateScreenState extends State<GenerateScreen> {
               color: Colors.white,
               textColor: Color.fromRGBO(236, 138, 92, 1),
               padding: EdgeInsets.all(8.0),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => QRExample()));
+              },
               child: Text(
                 "Scan establishment QR Code",
                 style: TextStyle(
@@ -1248,5 +1254,60 @@ class _GenerateScreenState extends State<GenerateScreen> {
       //   backgroundColor: isDone ? Colors.pink : Colors.grey,
       // ),
     );
+  }
+}
+
+class QRExample extends StatefulWidget {
+  QRExample({Key key, this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  _QRExampleState createState() => _QRExampleState();
+}
+
+class _QRExampleState extends State<QRExample> {
+  GlobalKey qrKey = GlobalKey();
+  QRViewController controller;
+  var qrText = "";
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.black,
+        body: QRView(
+          key: qrKey,
+          overlay: QrScannerOverlayShape(
+              borderRadius: 16,
+              borderColor: Colors.white,
+              borderLength: 120,
+              borderWidth: 10,
+              cutOutSize: 250),
+          onQRViewCreated: _onQRViewCreate,
+          data: "QR TEXT",
+        ));
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
+  void _onQRViewCreate(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      setState(() {
+        qrText = scanData;
+        dispose();
+        Route route = MaterialPageRoute(builder: (context) => ScanScreen());
+        Navigator.pushReplacement(context, route);
+      });
+    });
   }
 }

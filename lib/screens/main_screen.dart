@@ -5,11 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_merchants/screens/screen_generate.dart';
 import 'package:flutter_merchants/screens/favorite_screen.dart';
-import 'package:flutter_merchants/screens/home.dart';
+// import 'package:flutter_merchants/screens/home.dart';
 import 'package:flutter_merchants/screens/notifications.dart';
 import 'package:flutter_merchants/screens/profile.dart';
-import 'package:flutter_merchants/screens/search.dart';
-import 'package:flutter_merchants/screens/history.dart';
+import 'package:flutter_merchants/screens/screen_home.dart';
+import 'package:flutter_merchants/screens/screen_profile.dart';
 import 'package:flutter_merchants/util/const.dart';
 import 'package:flutter_merchants/widgets/badge.dart';
 import 'package:flutter_merchants/screens/questions.dart';
@@ -121,7 +121,8 @@ class _MainScreenState extends State<MainScreen> {
             // CartScreen(),
             Home(),
             GenerateScreen(),
-            Profile(),
+            //Profile(),
+            ProfileScreen(),
           ],
         ),
 
