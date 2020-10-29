@@ -49,7 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              elevation: 5,
+              elevation: 0,
               margin: EdgeInsets.all(10),
             ),
           ],
