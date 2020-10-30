@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:flutter_merchants/screens/join.dart';
-
+import 'package:flutter_merchants/screens/screen_signin.dart';
 
 class Walkthrough extends StatefulWidget {
   @override
@@ -9,41 +9,36 @@ class Walkthrough extends StatefulWidget {
 }
 
 class _WalkthroughState extends State<Walkthrough> {
-
   List pageInfos = [
     {
-      "title": "Lorem ipsum",
-      "body": "Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus."
-          " Vestibulum ac diam sit amet quam vehicula elementum sed sit amet "
-          "dui. Nulla porttitor accumsan tincidunt.",
+      "title": "Exciting Deals",
+      "body":
+          "You deserve to get everything businesses have to offer you, your family, and your budget.",
       "img": "assets/on1.png",
     },
     {
-      "title": "Lorem ipsum",
-      "body": "Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus."
-          " Vestibulum ac diam sit amet quam vehicula elementum sed sit amet "
-          "dui. Nulla porttitor accumsan tincidunt.",
+      "title": "Secure Visits",
+      "body":
+          "You'll never have to sign those contact tracing again and again.",
       "img": "assets/on2.png",
     },
     {
-      "title": "Lorem ipsum",
-      "body": "Vivamus magna justo, lacinia eget consectetur sed, convallis at tellus."
-          " Vestibulum ac diam sit amet quam vehicula elementum sed sit amet "
-          "dui. Nulla porttitor accumsan tincidunt.",
+      "title": "Secure Visits",
+      "body":
+          "You'll never have to sign those contact tracing again and again.",
       "img": "assets/on3.png",
     },
   ];
   @override
   Widget build(BuildContext context) {
     List<PageViewModel> pages = [
-      for(int i = 0; i<pageInfos.length; i++)
-        _buildPageModel(pageInfos[i])
+      for (int i = 0; i < pageInfos.length; i++) _buildPageModel(pageInfos[i])
     ];
 
     return WillPopScope(
-      onWillPop: ()=>Future.value(false),
+      onWillPop: () => Future.value(false),
       child: Scaffold(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Color.fromRGBO(236, 138, 92, 1),
         body: Padding(
           padding: EdgeInsets.all(10.0),
           child: IntroductionScreen(
@@ -51,8 +46,9 @@ class _WalkthroughState extends State<Walkthrough> {
             onDone: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (BuildContext context){
-                    return JoinApp();
+                  builder: (BuildContext context) {
+                    // return JoinApp();
+                    return SigninScreen();
                   },
                 ),
               );
@@ -60,35 +56,37 @@ class _WalkthroughState extends State<Walkthrough> {
             onSkip: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (BuildContext context){
-                    return JoinApp();
+                  builder: (BuildContext context) {
+                    return SigninScreen();
                   },
                 ),
               );
             },
-            showSkipButton: true,
+            showSkipButton: false,
             skip: Text("Skip"),
-            next: Text(
-              "Next",
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                color: Theme.of(context).accentColor,
-              ),
+            next: CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: 15,
+              child: Icon(Icons.arrow_forward, size: 15),
             ),
-            done: Text(
-              "Done",
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                color: Theme.of(context).accentColor,
-              ),
+            done: CircleAvatar(
+              backgroundColor: Colors.white,
+              radius: 15,
+              child: Icon(Icons.check_sharp, size: 15),
             ),
+            dotsDecorator: DotsDecorator(
+              activeColor: Colors.white,
+              color: Colors.white54,
+              spacing: const EdgeInsets.symmetric(horizontal: 10.0),
+            ),
+            dotsFlex: 2,
           ),
         ),
       ),
     );
   }
 
-  _buildPageModel(Map item){
+  _buildPageModel(Map item) {
     return PageViewModel(
       title: item['title'],
       body: item['body'],
@@ -97,17 +95,21 @@ class _WalkthroughState extends State<Walkthrough> {
         height: 185.0,
       ),
       decoration: PageDecoration(
+        contentPadding: EdgeInsets.all(40),
         titleTextStyle: TextStyle(
           fontSize: 28.0,
-          fontWeight: FontWeight.w600,
-          color: Theme.of(context).accentColor,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
         ),
-        bodyTextStyle: TextStyle(fontSize: 15.0),
+        bodyTextStyle: TextStyle(
+          fontSize: 15.0,
+          color: Colors.white,
+        ),
 //        dotsDecorator: DotsDecorator(
 //          activeColor: Theme.of(context).accentColor,
 //          activeSize: Size.fromRadius(8),
 //        ),
-        pageColor: Theme.of(context).primaryColor,
+        pageColor: Color.fromRGBO(236, 138, 92, 1),
       ),
     );
   }

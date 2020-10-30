@@ -1,9 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_merchants/screens/join.dart';
+import 'package:flutter_merchants/screens/walkthrough.dart';
 import 'package:flutter_merchants/util/const.dart';
-
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -11,16 +10,15 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-
   startTimeout() {
-    return  Timer(Duration(seconds: 5), changeScreen);
+    return Timer(Duration(seconds: 5), changeScreen);
   }
 
-  changeScreen() async{
+  changeScreen() async {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (BuildContext context){
-          return JoinApp();
+        builder: (BuildContext context) {
+          return Walkthrough();
         },
       ),
     );
@@ -33,7 +31,6 @@ class _SplashScreenState extends State<SplashScreen> {
     startTimeout();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,39 +39,46 @@ class _SplashScreenState extends State<SplashScreen> {
         margin: EdgeInsets.only(left: 40.0, right: 40.0),
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               // Icon(
               //   Icons.fastfood,
               //   size: 150.0,
               //   color: Theme.of(context).accentColor,
               // ),
+              Expanded(
+                child: Center(
+                  child: Image.asset(
+                    'assets/logo.png',
+                    width: 160,
+                  ),
+                ),
+              ),
 
-              Image.asset('assets/logo.png', width: 100,),
+              // Align(
+              //   alignment: Alignment.bottomCenter,
+              //   child: Text("10xphilippines.com",
+              //       style: TextStyle(
+              //           fontSize: 20, color: Color.fromRGBO(236, 138, 92, 1))),
+              // )
 
-              SizedBox(width: 40.0),
-
-              // Container(
-              //   alignment: Alignment.center,
-              //   margin: EdgeInsets.only(
-              //     top: 15.0,
-              //   ),
-              //   child: Text(
-              //     "${Constants.appName}",
-              //     style: TextStyle(
-              //       fontSize: 25.0,
-              //       fontWeight: FontWeight.w700,
-              //       color: Theme.of(context).accentColor,
-              //     ),
-              //   ),
-              // ),
+              Container(
+                alignment: Alignment.bottomCenter,
+                margin: EdgeInsets.only(
+                  top: 15.0,
+                  bottom: 20.0
+                ),
+                child: Text(
+                  "10xphilippines.com",
+                  style: TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.w600,
+                      color: Color.fromRGBO(236, 138, 92, 1)),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
   }
-
-
 }
