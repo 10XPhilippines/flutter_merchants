@@ -186,20 +186,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                           ),
                           SizedBox(height: 30),
                         ])),
-                    GridView.count(
-                      physics: ScrollPhysics(),
-                      shrinkWrap: true,
-                      primary: false,
-                      padding: const EdgeInsets.all(30),
-                      crossAxisSpacing: 20,
-                      mainAxisSpacing: 20,
-                      crossAxisCount: 2,
-                      childAspectRatio: MediaQuery.of(context).size.width /
-                          (MediaQuery.of(context).size.height / 4),
+                    SizedBox(height: 25),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         Container(
                           padding: const EdgeInsets.all(15),
-                          child: const Text("He'd have you all unravel at the"),
+                          child: Image.asset('assets/voucher.png'),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -215,7 +208,49 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         Container(
                           padding: const EdgeInsets.all(15),
-                          child: const Text("He'd have you all unravel at the"),
+                          child: Image.asset('assets/establishment.png'),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.4),
+                                spreadRadius: 1,
+                                blurRadius: 1,
+                                offset: Offset(2, 2),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Container(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            'Deals Availed',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            'Favorites',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Container(
+                          padding: const EdgeInsets.all(15),
+                          child: Image.asset('assets/establishment.png'),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -230,18 +265,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                           ),
                         ),
                         Container(
-                          padding: const EdgeInsets.all(0),
-                          child: const Text("Deals Availed"),
-                          constraints: BoxConstraints(maxHeight: 2, maxWidth: 2),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(0),
-                          child: const Text("Favorites"),
-                          constraints: BoxConstraints(maxHeight: 2, maxWidth: 2),
-                        ),
-                        Container(
                           padding: const EdgeInsets.all(15),
-                          child: const Text("He'd have you all unravel at the"),
+                          child: Image.asset('assets/establishment.png'),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -255,20 +280,25 @@ class _ProfileScreenState extends State<ProfileScreen>
                             ],
                           ),
                         ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
                         Container(
                           padding: const EdgeInsets.all(15),
-                          child: const Text("He'd have you all unravel at the"),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(15)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.4),
-                                spreadRadius: 1,
-                                blurRadius: 1,
-                                offset: Offset(2, 2),
-                              ),
-                            ],
+                          child: Text(
+                            'Visited Establishments',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(15),
+                          child: Text(
+                            'Account Settings',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
                           ),
                         ),
                       ],
