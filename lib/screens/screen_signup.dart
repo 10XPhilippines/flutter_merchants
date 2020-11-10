@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_merchants/screens/screen_signup.dart';
 
-class SigninScreen extends StatefulWidget {
+class SignupScreen extends StatefulWidget {
   @override
-  _SigninScreenState createState() => _SigninScreenState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _SigninScreenState extends State<SigninScreen>
-    with AutomaticKeepAliveClientMixin<SigninScreen> {
+class _SignupScreenState extends State<SignupScreen>
+    with AutomaticKeepAliveClientMixin<SignupScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+
+  String password;
 
   @override
   void initState() {
@@ -41,7 +43,7 @@ class _SigninScreenState extends State<SigninScreen>
             ),
             Center(
               child: Text(
-                "Sign In",
+                "Sign Up",
                 style: TextStyle(
                     color: Colors.black87,
                     fontSize: 20,
@@ -115,7 +117,7 @@ class _SigninScreenState extends State<SigninScreen>
                       child: Padding(
                           padding: EdgeInsets.fromLTRB(0.0, 0, 10.0, 0),
                           child: Text(
-                            "Email Address",
+                            "First Name",
                             style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 17,
@@ -137,7 +139,7 @@ class _SigninScreenState extends State<SigninScreen>
                         return null;
                       },
                       decoration: InputDecoration(
-                        labelText: "Enter your email address",
+                        labelText: "Enter your first name",
                         labelStyle:
                             TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
                         contentPadding: EdgeInsets.all(0.0),
@@ -164,7 +166,7 @@ class _SigninScreenState extends State<SigninScreen>
                       child: Padding(
                           padding: EdgeInsets.fromLTRB(0.0, 0, 10.0, 0),
                           child: Text(
-                            "Password",
+                            "Last Name",
                             style: TextStyle(
                                 color: Colors.black87,
                                 fontSize: 17,
@@ -186,7 +188,7 @@ class _SigninScreenState extends State<SigninScreen>
                         return null;
                       },
                       decoration: InputDecoration(
-                        labelText: "Enter your password",
+                        labelText: "Enter your last name",
                         labelStyle:
                             TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
                         contentPadding: EdgeInsets.all(0.0),
@@ -207,6 +209,124 @@ class _SigninScreenState extends State<SigninScreen>
                         ),
                       ),
                     ),
+                    SizedBox(height: 15.0),
+                    SizedBox(
+                      height: 30,
+                      child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.0, 0, 10.0, 0),
+                          child: Text(
+                            "Email Address",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500),
+                          )),
+                    ),
+                    new TextFormField(
+                      textInputAction: TextInputAction.next,
+                      autofocus: true,
+                      onChanged: (value) {
+                        print(value);
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'The field is required.';
+                        } else if (value.length < 4) {
+                          return 'The field must be at least 6 characters.';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Enter your email address",
+                        labelStyle:
+                            TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                        contentPadding: EdgeInsets.all(0.0),
+                        hintStyle: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.0),
+                    SizedBox(
+                      height: 30,
+                      child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.0, 0, 10.0, 0),
+                          child: Text(
+                            "Password",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500),
+                          )),
+                    ),
+                    new TextFormField(
+                      textInputAction: TextInputAction.next,
+                      autofocus: true,
+                      obscureText: true,
+                      onChanged: (value) {
+                        print(value);
+                        password = value;
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'The field is required.';
+                        } else if (value.length < 4) {
+                          return 'The field must be at least 8 characters.';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Enter your password",
+                        labelStyle:
+                            TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                        contentPadding: EdgeInsets.all(0.0),
+                        hintStyle: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15),
+                    SizedBox(
+                      height: 30,
+                      child: Padding(
+                          padding: EdgeInsets.fromLTRB(0.0, 0, 10.0, 0),
+                          child: Text(
+                            "Confirm Password",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500),
+                          )),
+                    ),
+                    new TextFormField(
+                      textInputAction: TextInputAction.next,
+                      autofocus: true,
+                      obscureText: true,
+                      onChanged: (value) {
+                        print(value);
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'The field is required.';
+                        } else if (password != value) {
+                          return 'The password confirmation does not match.';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(
+                        labelText: "Confirm your password",
+                        labelStyle:
+                            TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
+                        contentPadding: EdgeInsets.all(0.0),
+                        hintStyle: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 15.0),
                     SizedBox(height: 30.0),
                     FlatButton(
                       height: 50,
@@ -223,7 +343,7 @@ class _SigninScreenState extends State<SigninScreen>
                         }
                       },
                       child: Text(
-                        "Sign in",
+                        "Sign up",
                         style: TextStyle(
                           fontSize: 14.0,
                         ),
@@ -238,10 +358,10 @@ class _SigninScreenState extends State<SigninScreen>
               textAlign: TextAlign.center,
               text: TextSpan(children: <TextSpan>[
                 TextSpan(
-                    text: "Don't have an account? ",
+                    text: "Already have an account? ",
                     style: TextStyle(fontSize: 14, color: Colors.black54)),
                 TextSpan(
-                    text: "Sign up here",
+                    text: "Sign in here",
                     style: TextStyle(
                         fontSize: 14, color: Color.fromRGBO(236, 138, 92, 1))),
               ]),

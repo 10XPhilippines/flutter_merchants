@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:introduction_screen/introduction_screen.dart';
-import 'package:flutter_merchants/screens/join.dart';
+import 'package:flutter_merchants/screens/screen_signup.dart';
 import 'package:flutter_merchants/screens/screen_signin.dart';
+import 'package:flutter_merchants/screens/screen_forgot.dart';
+
 
 class Walkthrough extends StatefulWidget {
   @override
@@ -49,6 +51,8 @@ class _WalkthroughState extends State<Walkthrough> {
                   builder: (BuildContext context) {
                     // return JoinApp();
                     return SigninScreen();
+                    // return SignupScreen();
+                    // return ForgotScreen();
                   },
                 ),
               );
