@@ -131,14 +131,14 @@ class _MainScreenState extends State<MainScreen> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              SizedBox(width: 7),
+              SizedBox(width: 10),
               IconButton(
                 icon: Icon(
                   Icons.home,
-                  size: 24.0,
+                  size: 30.0,
                 ),
                 color: _page == 0
-                    ? Theme.of(context).accentColor
+                    ? Color.fromRGBO(236, 138, 92, 1)
                     : Theme
                     .of(context)
                     .textTheme.caption.color,
@@ -148,10 +148,10 @@ class _MainScreenState extends State<MainScreen> {
               IconButton(
                 icon:Icon(
                   Icons.qr_code_scanner,
-                  size: 24.0,
+                  size: 30.0,
                 ),
                 color: _page == 1
-                    ? Theme.of(context).accentColor
+                    ? Color.fromRGBO(236, 138, 92, 1)
                     : Theme
                     .of(context)
                     .textTheme.caption.color,
@@ -161,10 +161,10 @@ class _MainScreenState extends State<MainScreen> {
               IconButton(
                 icon:Icon(
                   Icons.person,
-                  size: 24.0,
+                  size: 30.0,
                 ),
                 color: _page == 2
-                    ? Theme.of(context).accentColor
+                    ? Color.fromRGBO(236, 138, 92, 1)
                     : Theme
                     .of(context)
                     .textTheme.caption.color,

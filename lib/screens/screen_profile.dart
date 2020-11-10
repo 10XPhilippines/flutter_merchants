@@ -192,7 +192,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                       children: <Widget>[
                         Container(
                           padding: const EdgeInsets.all(15),
-                          child: Image.asset('assets/voucher.png'),
+                          child: Icon(Icons.event_available,
+                              size: 65, color: Colors.grey),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -208,7 +209,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         Container(
                           padding: const EdgeInsets.all(15),
-                          child: Image.asset('assets/establishment.png'),
+                          child: Icon(Icons.favorite_border_outlined,
+                              size: 65, color: Colors.grey),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -232,7 +234,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                           child: Text(
                             'Deals Availed',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w700),
                           ),
                         ),
                         Container(
@@ -240,7 +243,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                           child: Text(
                             'Favorites',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w700),
                           ),
                         ),
                       ],
@@ -250,7 +254,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                       children: <Widget>[
                         Container(
                           padding: const EdgeInsets.all(15),
-                          child: Image.asset('assets/establishment.png'),
+                          child: Icon(Icons.store_outlined,
+                              size: 65, color: Colors.grey),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -266,7 +271,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                         Container(
                           padding: const EdgeInsets.all(15),
-                          child: Image.asset('assets/establishment.png'),
+                          child: Icon(Icons.settings,
+                              size: 65, color: Colors.grey),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -288,21 +294,24 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Container(
                           padding: const EdgeInsets.all(15),
                           child: Text(
-                            'Visited Establishments',
+                            'Visits',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w700),
                           ),
                         ),
                         Container(
                           padding: const EdgeInsets.all(15),
                           child: Text(
-                            'Account Settings',
+                            'Settings',
                             textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
+                            style: TextStyle(
+                                fontSize: 12, fontWeight: FontWeight.w700),
                           ),
                         ),
                       ],
                     ),
+                    SizedBox(height: 15.0),
                   ],
           ),
         ),

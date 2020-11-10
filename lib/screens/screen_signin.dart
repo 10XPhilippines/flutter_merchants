@@ -1,7 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_merchants/network_utils/api.dart';
+import 'package:flutter_merchants/screens/main_screen.dart';
 import 'package:flutter_merchants/screens/screen_signup.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SigninScreen extends StatefulWidget {
   @override
@@ -12,6 +17,84 @@ class _SigninScreenState extends State<SigninScreen>
     with AutomaticKeepAliveClientMixin<SigninScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
+
+  var email;
+  var password;
+  Map profile = {};
+  bool _isLoading = false;
+  bool _isButtonDisabled = false;
+  BuildContext _context;
+  String message;
+
+  void _login() async {
+    setState(() {
+      _isLoading = true;
+      _isButtonDisabled = true;
+    });
+
+    var data = {'email': email, 'password': password};
+
+    print(data);
+
+    try {
+      var res = await Network().authData(data, '/login');
+      var body = json.decode(res.body);
+      if (body['success']) {
+        SharedPreferences localStorage = await SharedPreferences.getInstance();
+        localStorage.setString('token', json.encode(body['token']));
+        localStorage.setString('user', json.encode(body['user']));
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) {
+              return MainScreen();
+            },
+          ),
+        );
+      } else {
+        setState(() {
+          message = body['message'];
+          _isButtonDisabled = false;
+        });
+        showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Login failed"),
+                content: Text(message),
+                actions: <Widget>[
+                  new FlatButton(
+                      child: const Text('OK'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
+                ],
+              );
+            });
+      }
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+      });
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 5),
+        content: Container(
+            height: 30.0,
+            child: Center(
+              child: Text(
+                'Network is unreachable',
+                style: TextStyle(fontSize: 10.0),
+              ),
+            )),
+        backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+      );
+      Scaffold.of(_context).hideCurrentSnackBar();
+      Scaffold.of(_context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   void initState() {
@@ -61,6 +144,7 @@ class _SigninScreenState extends State<SigninScreen>
               onPressed: () {},
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   IconButton(
                       icon: Icon(Icons.g_translate),
@@ -69,7 +153,7 @@ class _SigninScreenState extends State<SigninScreen>
                   Text(
                     "Continue with Facebook",
                     style: TextStyle(
-                      fontSize: 14.0,
+                      fontSize: 12.0,
                     ),
                   ),
                 ],
@@ -96,7 +180,7 @@ class _SigninScreenState extends State<SigninScreen>
                   Text(
                     "Continue with Google",
                     style: TextStyle(
-                      fontSize: 14.0,
+                      fontSize: 12.0,
                     ),
                   ),
                 ],
@@ -126,7 +210,7 @@ class _SigninScreenState extends State<SigninScreen>
                       textInputAction: TextInputAction.next,
                       autofocus: true,
                       onChanged: (value) {
-                        print(value);
+                        email = value;
                       },
                       validator: (value) {
                         if (value.isEmpty) {
@@ -141,17 +225,6 @@ class _SigninScreenState extends State<SigninScreen>
                         labelStyle:
                             TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
                         contentPadding: EdgeInsets.all(0.0),
-                        // enabledBorder: OutlineInputBorder(
-                        //   borderSide: BorderSide(
-                        //     color: Colors.transparent,
-                        //   ),
-                        //   borderRadius: BorderRadius.circular(5.0),
-                        // ),
-                        // hintText: "Enter your email address",
-                        // prefixIcon: Icon(
-                        //   Icons.perm_identity,
-                        //   color: Colors.black,
-                        // ),
                         hintStyle: TextStyle(
                           fontSize: 15.0,
                           color: Colors.black54,
@@ -174,14 +247,13 @@ class _SigninScreenState extends State<SigninScreen>
                     new TextFormField(
                       textInputAction: TextInputAction.next,
                       autofocus: true,
+                      obscureText: true,
                       onChanged: (value) {
-                        print(value);
+                        password = value;
                       },
                       validator: (value) {
                         if (value.isEmpty) {
                           return 'The field is required.';
-                        } else if (value.length < 4) {
-                          return 'The field must be at least 6 characters.';
                         }
                         return null;
                       },
@@ -190,17 +262,6 @@ class _SigninScreenState extends State<SigninScreen>
                         labelStyle:
                             TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
                         contentPadding: EdgeInsets.all(0.0),
-                        // enabledBorder: OutlineInputBorder(
-                        //   borderSide: BorderSide(
-                        //     color: Colors.transparent,
-                        //   ),
-                        //   borderRadius: BorderRadius.circular(5.0),
-                        // ),
-                        // hintText: "Enter your email address",
-                        // prefixIcon: Icon(
-                        //   Icons.perm_identity,
-                        //   color: Colors.black,
-                        // ),
                         hintStyle: TextStyle(
                           fontSize: 15.0,
                           color: Colors.black54,
@@ -219,15 +280,26 @@ class _SigninScreenState extends State<SigninScreen>
                       padding: EdgeInsets.all(8.0),
                       onPressed: () {
                         if (_formKey.currentState.validate()) {
-                          print("Submit");
+                          _login();
                         }
                       },
-                      child: Text(
-                        "Sign in",
-                        style: TextStyle(
-                          fontSize: 14.0,
-                        ),
-                      ),
+                      child: _isLoading
+                          ? Center(
+                              child: SizedBox(
+                                child: CircularProgressIndicator(
+                                  backgroundColor: Colors.white,
+                                  strokeWidth: 2.0,
+                                ),
+                                height: 15.0,
+                                width: 15.0,
+                              ),
+                            )
+                          : Text(
+                              'Sign in',
+                              style: TextStyle(
+                                fontSize: 14,
+                              ),
+                            ),
                     ),
                   ],
                 ),

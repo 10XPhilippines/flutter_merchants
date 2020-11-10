@@ -1123,8 +1123,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
             SizedBox(
               height: 200,
               child: isDone
-                  ? 
-                  Center(
+                  ? Center(
                       child: QrImage(
                       data: bytes,
                       version: QrVersions.auto,
@@ -1157,16 +1156,14 @@ class _GenerateScreenState extends State<GenerateScreen> {
             // ),
             SizedBox(height: 10),
             SizedBox(
-              height: 13,
+              height: 40,
               child: isDone
-                  ? Text(
-                      "Merchant will scan this generated dynamic code",
+                  ? Text("Merchant will scan this generated dynamic code",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w300,
-                          color: Color.fromRGBO(236, 138, 92, 1)),
-                    )
+                          color: Colors.greenAccent))
                   : Text(
                       "QR code will be generated if consent of user is granted",
                       textAlign: TextAlign.center,
@@ -1232,7 +1229,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
               textColor: Color.fromRGBO(236, 138, 92, 1),
               padding: EdgeInsets.all(8.0),
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => QRExample()));
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => QRExample()));
               },
               child: Text(
                 "Scan establishment QR Code",
@@ -1242,7 +1240,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
               ),
             ),
 
-            SizedBox(height: 80.0),
+            SizedBox(height: 30.0),
           ],
         ),
       ),

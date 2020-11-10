@@ -71,7 +71,7 @@ class _SignupScreenState extends State<SignupScreen>
                   Text(
                     "Continue with Facebook",
                     style: TextStyle(
-                      fontSize: 14.0,
+                      fontSize: 12.0,
                     ),
                   ),
                 ],
@@ -98,7 +98,7 @@ class _SignupScreenState extends State<SignupScreen>
                   Text(
                     "Continue with Google",
                     style: TextStyle(
-                      fontSize: 14.0,
+                      fontSize: 12.0,
                     ),
                   ),
                 ],
