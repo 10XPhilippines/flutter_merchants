@@ -1093,7 +1093,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
       //   ],
       // ),
       body: Padding(
-        padding: EdgeInsets.fromLTRB(20.0, 60.0, 20.0, 0),
+        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
         child: ListView(
           shrinkWrap: true,
           children: <Widget>[
