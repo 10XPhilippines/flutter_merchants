@@ -21,7 +21,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
     return Scaffold(
       key: _scaffoldKey,
       body: SingleChildScrollView(
-        physics: ScrollPhysics(),
+        physics: BouncingScrollPhysics(),
         child: Padding(
           padding: EdgeInsets.fromLTRB(20.0, 60.0, 20.0, 0),
           child: Column(
