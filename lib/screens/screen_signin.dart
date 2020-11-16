@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_merchants/network_utils/api.dart';
 import 'package:flutter_merchants/screens/main_screen.dart';
 import 'package:flutter_merchants/screens/screen_signup.dart';
+import 'package:flutter_merchants/screens/screen_forgot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SigninScreen extends StatefulWidget {
@@ -79,20 +80,21 @@ class _SigninScreenState extends State<SigninScreen>
       setState(() {
         _isLoading = false;
       });
-      final snackBar = SnackBar(
-        duration: Duration(seconds: 5),
-        content: Container(
-            height: 30.0,
-            child: Center(
-              child: Text(
-                'Network is unreachable',
-                style: TextStyle(fontSize: 10.0),
-              ),
-            )),
-        backgroundColor: Color.fromRGBO(236, 138, 92, 1),
-      );
-      Scaffold.of(_context).hideCurrentSnackBar();
-      Scaffold.of(_context).showSnackBar(snackBar);
+      print(e.toString());
+      // final snackBar = SnackBar(
+      //   duration: Duration(seconds: 5),
+      //   content: Container(
+      //       height: 30.0,
+      //       child: Center(
+      //         child: Text(
+      //           'Network is unreachable',
+      //           style: TextStyle(fontSize: 10.0),
+      //         ),
+      //       )),
+      //   backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+      // );
+      // Scaffold.of(_context).hideCurrentSnackBar();
+      // Scaffold.of(_context).showSnackBar(snackBar);
     }
   }
 
@@ -110,6 +112,7 @@ class _SigninScreenState extends State<SigninScreen>
       body: Padding(
         padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 0),
         child: ListView(
+          physics: BouncingScrollPhysics(),
           shrinkWrap: true,
           children: <Widget>[
             Center(
@@ -186,7 +189,27 @@ class _SigninScreenState extends State<SigninScreen>
                 ],
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 15),
+            Row(children: <Widget>[
+              Expanded(
+                child: new Container(
+                    margin: const EdgeInsets.only(left: 0.0, right: 10.0),
+                    child: Divider(
+                      color: Colors.black,
+                      height: 50,
+                    )),
+              ),
+              Text("OR"),
+              Expanded(
+                child: new Container(
+                    margin: const EdgeInsets.only(left: 10.0, right: 0.0),
+                    child: Divider(
+                      color: Colors.black,
+                      height: 50,
+                    )),
+              ),
+            ]),
+            SizedBox(height: 15),
             SizedBox(
               child: Form(
                 key: _formKey,
@@ -208,6 +231,7 @@ class _SigninScreenState extends State<SigninScreen>
                     ),
                     new TextFormField(
                       textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.emailAddress,
                       autofocus: true,
                       onChanged: (value) {
                         email = value;
@@ -245,6 +269,7 @@ class _SigninScreenState extends State<SigninScreen>
                           )),
                     ),
                     new TextFormField(
+                      keyboardType: TextInputType.visiblePassword,
                       textInputAction: TextInputAction.next,
                       autofocus: true,
                       obscureText: true,
@@ -268,7 +293,25 @@ class _SigninScreenState extends State<SigninScreen>
                         ),
                       ),
                     ),
-                    SizedBox(height: 30.0),
+                    SizedBox(height: 15.0),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return ForgotScreen();
+                            },
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Forgot password?',
+                        style:
+                            TextStyle(color: Color.fromRGBO(236, 138, 92, 1)),
+                        textAlign: TextAlign.end,
+                      ),
+                    ),
+                    SizedBox(height: 20.0),
                     FlatButton(
                       height: 50,
                       shape: RoundedRectangleBorder(
@@ -315,7 +358,18 @@ class _SigninScreenState extends State<SigninScreen>
                 TextSpan(
                     text: "Sign up here",
                     style: TextStyle(
-                        fontSize: 14, color: Color.fromRGBO(236, 138, 92, 1))),
+                        fontSize: 14, color: Color.fromRGBO(236, 138, 92, 1)),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        print('to sign up');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return SignupScreen();
+                            },
+                          ),
+                        );
+                      }),
               ]),
             ),
             SizedBox(height: 20),

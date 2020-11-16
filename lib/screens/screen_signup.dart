@@ -1,7 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_merchants/screens/screen_signup.dart';
+import 'package:flutter_merchants/screens/screen_signin.dart';
 
 class SignupScreen extends StatefulWidget {
   @override
@@ -29,6 +29,7 @@ class _SignupScreenState extends State<SignupScreen>
       body: Padding(
         padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 0),
         child: ListView(
+          physics: BouncingScrollPhysics(),
           shrinkWrap: true,
           children: <Widget>[
             Center(
@@ -104,7 +105,27 @@ class _SignupScreenState extends State<SignupScreen>
                 ],
               ),
             ),
-            SizedBox(height: 30),
+            SizedBox(height: 15),
+            Row(children: <Widget>[
+              Expanded(
+                child: new Container(
+                    margin: const EdgeInsets.only(left: 0.0, right: 10.0),
+                    child: Divider(
+                      color: Colors.black,
+                      height: 50,
+                    )),
+              ),
+              Text("OR"),
+              Expanded(
+                child: new Container(
+                    margin: const EdgeInsets.only(left: 10.0, right: 0.0),
+                    child: Divider(
+                      color: Colors.black,
+                      height: 50,
+                    )),
+              ),
+            ]),
+            SizedBox(height: 15),
             SizedBox(
               child: Form(
                 key: _formKey,
@@ -363,7 +384,18 @@ class _SignupScreenState extends State<SignupScreen>
                 TextSpan(
                     text: "Sign in here",
                     style: TextStyle(
-                        fontSize: 14, color: Color.fromRGBO(236, 138, 92, 1))),
+                        fontSize: 14, color: Color.fromRGBO(236, 138, 92, 1)),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        print('to sign up');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return SigninScreen();
+                            },
+                          ),
+                        );
+                      }),
               ]),
             ),
             SizedBox(height: 20),

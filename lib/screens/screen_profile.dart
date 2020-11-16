@@ -294,7 +294,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Container(
                           padding: const EdgeInsets.all(15),
                           child: Text(
-                            'Visited\nEstablishments',
+                            'Visited\nEstablishment',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 12, fontWeight: FontWeight.w700),

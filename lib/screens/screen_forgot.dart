@@ -27,6 +27,7 @@ class _ForgotScreenState extends State<ForgotScreen>
       body: Padding(
         padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 0),
         child: ListView(
+          physics: BouncingScrollPhysics(),
           shrinkWrap: true,
           children: <Widget>[
             Center(
@@ -70,6 +71,7 @@ class _ForgotScreenState extends State<ForgotScreen>
                     ),
                     new TextFormField(
                       textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.emailAddress,
                       autofocus: false,
                       onChanged: (value) {
                         print(value);
@@ -141,7 +143,18 @@ class _ForgotScreenState extends State<ForgotScreen>
                 TextSpan(
                     text: "Sign up here",
                     style: TextStyle(
-                        fontSize: 14, color: Color.fromRGBO(236, 138, 92, 1))),
+                        fontSize: 14, color: Color.fromRGBO(236, 138, 92, 1)),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        print('to sign up');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return SignupScreen();
+                            },
+                          ),
+                        );
+                      }),
               ]),
             ),
             SizedBox(height: 30),
