@@ -17,6 +17,9 @@ import 'package:flutter_merchants/models/barangay.dart';
 import 'package:twitter_qr_scanner/twitter_qr_scanner.dart';
 import 'package:twitter_qr_scanner/QrScannerOverlayShape.dart';
 
+var merchantQrData;
+bool merchantQrDataHasValue = false;
+
 class GenerateScreen extends StatefulWidget {
   @override
   _GenerateScreenState createState() => _GenerateScreenState();
@@ -24,7 +27,7 @@ class GenerateScreen extends StatefulWidget {
 
 class _GenerateScreenState extends State<GenerateScreen> {
   String bytes;
-  var qrText;
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey = GlobalKey<FormState>();
   final _formKey2 = GlobalKey<FormState>();
@@ -1181,206 +1184,247 @@ class _GenerateScreenState extends State<GenerateScreen> {
   @override
   void initState() {
     getProfile();
-    checkExitTime();
+    // checkExitTime();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      // appBar: AppBar(
-      //   automaticallyImplyLeading: false,
-      //   leading: IconButton(
-      //     icon: Icon(
-      //       Icons.keyboard_backspace,
-      //     ),
-      //     onPressed: () => Navigator.pop(context),
-      //   ),
-      //   centerTitle: true,
-      //   title: Text(
-      //     "Wait Lang!",
-      //   ),
-      //   elevation: 0.0,
-      //   actions: <Widget>[
-      //     IconButton(
-      //       icon: Icon(Icons.history),
-      //       iconSize: 20,
-      //       onPressed: () {
-      //         Navigator.of(context).push(
-      //           MaterialPageRoute(
-      //             builder: (BuildContext context) {
-      //               return VisitScreen();
-      //             },
-      //           ),
-      //         );
-      //       },
-      //       tooltip: "Save",
-      //     ),
-      //   ],
-      // ),
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
-        child: ListView(
-          physics: BouncingScrollPhysics(),
-          shrinkWrap: true,
-          children: <Widget>[
-            Center(
-              child: Text(
-                "Wait Lang!",
-                style: TextStyle(
-                    color: Color.fromRGBO(21, 26, 70, 1),
-                    fontSize: 35,
-                    fontWeight: FontWeight.w700),
+    if (merchantQrDataHasValue == true) {
+      return Scaffold(
+        key: _scaffoldKey,
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
+          child: ListView(
+            physics: BouncingScrollPhysics(),
+            shrinkWrap: true,
+            children: <Widget>[
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(children: <TextSpan>[
+                  TextSpan(
+                      text: "10X ",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(236, 138, 92, 1))),
+                  TextSpan(
+                      text: "Wait Lang",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(21, 26, 70, 1))),
+                ]),
               ),
-            ),
-
-            RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(children: <TextSpan>[
-                TextSpan(
-                    text: "10X ",
-                    style: TextStyle(
-                        fontSize: 20, color: Color.fromRGBO(236, 138, 92, 1))),
-                TextSpan(
-                    text: "Digital Ledger",
-                    style: TextStyle(
-                        fontSize: 20, color: Color.fromRGBO(21, 26, 70, 1))),
-              ]),
-            ),
-            SizedBox(
-              height: 200,
-              child: isDone
-                  ? Center(
-                      child: QrImage(
-                      data: bytes,
-                      version: QrVersions.auto,
-                      size: 180,
-                    ))
-                  : Center(
-                      child: Icon(Icons.qr_code,
-                          size: 210, color: Color.fromRGBO(234, 86, 86, 1)),
-                    ),
-            ),
-            // SizedBox(
-            //   height: 20,
-            // ),
-            // StepsIndicator(
-            //   selectedStep: indicator,
-            //   nbSteps: 7,
-            //   selectedStepColorOut: Colors.blue,
-            //   selectedStepColorIn: Colors.blue,
-            //   doneStepColor: Colors.blue,
-            //   unselectedStepColor: Colors.red,
-            //   doneLineColor: Colors.blue,
-            //   undoneLineColor: Colors.red,
-            //   isHorizontal: true,
-            //   lineLength: 40,
-            //   lineThickness: 1,
-            //   doneStepSize: 10,
-            //   unselectedStepSize: 10,
-            //   selectedStepSize: 10,
-            //   selectedStepBorderSize: 1,
-            // ),
-            SizedBox(height: 10),
-            SizedBox(
-              height: 40,
-              child: isDone
-                  ? Text("Success! Qr code generated for digital ledger",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.greenAccent))
-                  : Text(
-                      "QR code will be generated if consent of user is granted",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w300,
-                          color: Color.fromRGBO(236, 138, 92, 1)),
-                    ),
-            ),
-            SizedBox(height: 28),
-            RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(children: <TextSpan>[
-                TextSpan(
-                    text: "I hereby authorize ",
-                    style: TextStyle(
-                        fontSize: 15, color: Color.fromRGBO(21, 26, 70, 1))),
-                TextSpan(
-                    text: "10X Philippines ",
-                    style: TextStyle(
-                        fontSize: 15, color: Color.fromRGBO(236, 138, 92, 1))),
-                TextSpan(
-                    text:
-                        "to collect my data indicated for the purpose of effecting control of COVID-19 infection. I understand that my personal information is protected by ",
-                    style: TextStyle(
-                        fontSize: 15, color: Color.fromRGBO(21, 26, 70, 1))),
-                TextSpan(
-                    text: "RA 10173, Data Privacy Act of 2012.",
-                    style: TextStyle(
-                        fontSize: 15, color: Color.fromRGBO(236, 138, 92, 1))),
-              ]),
-            ),
-
-            SizedBox(height: 40),
-
-            FlatButton(
-              height: 50,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
-              color: Color.fromRGBO(236, 138, 92, 1),
-              textColor: Colors.white,
-              padding: EdgeInsets.all(8.0),
-              onPressed: () {
-                //_generateBarCode2(rawJson.toString());
-                showTemperature();
-              },
-              child: Text(
-                "Generate QR Code",
-                style: TextStyle(
-                  fontSize: 14.0,
+              SizedBox(height: 70),
+              Center(
+                child: Text(
+                  "Success!",
+                  style: TextStyle(
+                      color: Color.fromRGBO(236, 138, 92, 1),
+                      fontSize: 40,
+                      fontWeight: FontWeight.w700),
                 ),
               ),
-            ),
-
-            SizedBox(height: 10),
-
-            FlatButton(
-              height: 50,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
-              color: Colors.white,
-              textColor: Color.fromRGBO(236, 138, 92, 1),
-              padding: EdgeInsets.all(8.0),
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => QRExample()));
-              },
-              child: Text(
-                "Scan establishment QR Code",
-                style: TextStyle(
-                  fontSize: 14.0,
+              SizedBox(height: 50),
+              Center(
+                child: Icon(Icons.check_circle_outline_sharp,
+                    size: 200, color: Color.fromRGBO(21, 26, 70, 1)),
+              ),
+              SizedBox(height: 60),
+              Padding(
+                padding: EdgeInsets.only(left: 25, right: 25),
+                child: FlatButton(
+                  height: 50,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                      side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                  color: Color.fromRGBO(236, 138, 92, 1),
+                  textColor: Colors.white,
+                  padding: EdgeInsets.all(8.0),
+                  onPressed: () {},
+                  child: Text(
+                    "Okay",
+                    style: TextStyle(
+                      fontSize: 14.0,
+                    ),
+                  ),
                 ),
               ),
-            ),
-
-            SizedBox(height: 30.0),
-          ],
+              SizedBox(height: 30.0),
+            ],
+          ),
         ),
-      ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: isDone ? () => addCompanion() : null,
-      //   //onPressed: () => addCompanion(),
-      //   label: Text('Add Companion'),
-      //   icon: Icon(Icons.add),
-      //   backgroundColor: isDone ? Colors.pink : Colors.grey,
-      // ),
-    );
+      );
+    } else {
+      return Scaffold(
+        key: _scaffoldKey,
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
+          child: ListView(
+            physics: BouncingScrollPhysics(),
+            shrinkWrap: true,
+            children: <Widget>[
+              Center(
+                child: Text(
+                  "Wait Lang!",
+                  style: TextStyle(
+                      color: Color.fromRGBO(21, 26, 70, 1),
+                      fontSize: 35,
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
+
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(children: <TextSpan>[
+                  TextSpan(
+                      text: "10X ",
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Color.fromRGBO(236, 138, 92, 1))),
+                  TextSpan(
+                      text: "Digital Ledger",
+                      style: TextStyle(
+                          fontSize: 20, color: Color.fromRGBO(21, 26, 70, 1))),
+                ]),
+              ),
+              SizedBox(
+                height: 200,
+                child: isDone
+                    ? Center(
+                        child: QrImage(
+                        data: bytes,
+                        version: QrVersions.auto,
+                        size: 180,
+                      ))
+                    : Center(
+                        child: Icon(Icons.qr_code,
+                            size: 210, color: Color.fromRGBO(234, 86, 86, 1)),
+                      ),
+              ),
+              // SizedBox(
+              //   height: 20,
+              // ),
+              // StepsIndicator(
+              //   selectedStep: indicator,
+              //   nbSteps: 7,
+              //   selectedStepColorOut: Colors.blue,
+              //   selectedStepColorIn: Colors.blue,
+              //   doneStepColor: Colors.blue,
+              //   unselectedStepColor: Colors.red,
+              //   doneLineColor: Colors.blue,
+              //   undoneLineColor: Colors.red,
+              //   isHorizontal: true,
+              //   lineLength: 40,
+              //   lineThickness: 1,
+              //   doneStepSize: 10,
+              //   unselectedStepSize: 10,
+              //   selectedStepSize: 10,
+              //   selectedStepBorderSize: 1,
+              // ),
+              SizedBox(height: 10),
+              SizedBox(
+                height: 40,
+                child: isDone
+                    ? Text("Success! Qr code generated for digital ledger",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                            color: Colors.greenAccent))
+                    : Text(
+                        "QR code will be generated if consent of user is granted",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                            color: Color.fromRGBO(236, 138, 92, 1)),
+                      ),
+              ),
+              SizedBox(height: 28),
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(children: <TextSpan>[
+                  TextSpan(
+                      text: "I hereby authorize ",
+                      style: TextStyle(
+                          fontSize: 15, color: Color.fromRGBO(21, 26, 70, 1))),
+                  TextSpan(
+                      text: "10X Philippines ",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromRGBO(236, 138, 92, 1))),
+                  TextSpan(
+                      text:
+                          "to collect my data indicated for the purpose of effecting control of COVID-19 infection. I understand that my personal information is protected by ",
+                      style: TextStyle(
+                          fontSize: 15, color: Color.fromRGBO(21, 26, 70, 1))),
+                  TextSpan(
+                      text: "RA 10173, Data Privacy Act of 2012.",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: Color.fromRGBO(236, 138, 92, 1))),
+                ]),
+              ),
+
+              SizedBox(height: 40),
+
+              FlatButton(
+                height: 50,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                color: Color.fromRGBO(236, 138, 92, 1),
+                textColor: Colors.white,
+                padding: EdgeInsets.all(8.0),
+                onPressed: () {
+                  _generateBarCode2(rawJson.toString());
+                  // showTemperature();
+                },
+                child: Text(
+                  "Generate QR Code",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 10),
+
+              FlatButton(
+                height: 50,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                color: Colors.white,
+                textColor: Color.fromRGBO(236, 138, 92, 1),
+                padding: EdgeInsets.all(8.0),
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => QRExample()));
+                },
+                child: Text(
+                  "Scan establishment QR Code",
+                  style: TextStyle(
+                    fontSize: 14.0,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 30.0),
+            ],
+          ),
+        ),
+        // floatingActionButton: FloatingActionButton.extended(
+        //   onPressed: isDone ? () => addCompanion() : null,
+        //   //onPressed: () => addCompanion(),
+        //   label: Text('Add Companion'),
+        //   icon: Icon(Icons.add),
+        //   backgroundColor: isDone ? Colors.pink : Colors.grey,
+        // ),
+      );
+    }
   }
 }
 
@@ -1396,7 +1440,6 @@ class QRExample extends StatefulWidget {
 class _QRExampleState extends State<QRExample> {
   GlobalKey qrKey = GlobalKey();
   QRViewController controller;
-  var qrText = "";
 
   @override
   void initState() {
@@ -1416,7 +1459,7 @@ class _QRExampleState extends State<QRExample> {
               borderWidth: 10,
               cutOutSize: 250),
           onQRViewCreated: _onQRViewCreate,
-          data: "QR TEXT",
+          data: "10X",
         ));
   }
 
@@ -1430,9 +1473,10 @@ class _QRExampleState extends State<QRExample> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       setState(() {
-        qrText = scanData;
+        merchantQrData = scanData;
+        merchantQrDataHasValue = true;
         dispose();
-        Route route = MaterialPageRoute(builder: (context) => ScanScreen());
+        Route route = MaterialPageRoute(builder: (context) => GenerateScreen());
         Navigator.pushReplacement(context, route);
       });
     });
