@@ -25,7 +25,7 @@ class _WalkthroughState extends State<Walkthrough> {
       "img": "assets/on2.png",
     },
     {
-      "title": "Secure Visits",
+      "title": "Discover Establishments",
       "body":
           "You'll never have to sign those contact tracing again and again.",
       "img": "assets/on3.png",

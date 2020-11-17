@@ -114,7 +114,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
     }
 
     if (hasAddress == false) {
-      updateAddress();
+      showUpdateAddress();
     }
   }
 
@@ -140,16 +140,25 @@ class _GenerateScreenState extends State<GenerateScreen> {
         });
         Navigator.pop(context);
         final snackBar = SnackBar(
-          duration: Duration(seconds: 5),
+          duration: Duration(seconds: 3),
           content: Container(
-              height: 40.0,
-              child: Center(
-                child: Text(
-                  'User data updated',
-                  style: TextStyle(fontSize: 16.0),
-                ),
-              )),
-          backgroundColor: Colors.greenAccent,
+            height: 18.0,
+            child: Padding(
+              padding: EdgeInsets.only(left: 0, right: 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Profile updated successfully.',
+                    style: TextStyle(fontSize: 15.0),
+                    textAlign: TextAlign.start,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          backgroundColor: Color.fromRGBO(236, 138, 92, 1),
         );
         _scaffoldKey.currentState.showSnackBar(snackBar);
       } else {
@@ -460,7 +469,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
     );
   }
 
-  updateAddress() async {
+  showUpdateAddress() async {
     await showDialog<String>(
         context: context,
         barrierDismissible: false,
@@ -470,33 +479,37 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 return false;
               },
               child: new AlertDialog(
-                contentPadding: const EdgeInsets.all(16.0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                contentPadding: const EdgeInsets.all(20.0),
                 content: new SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       children: <Widget>[
-                        new Container(
-                          alignment: Alignment.topLeft,
-                          margin: EdgeInsets.only(
-                            top: 12.0,
-                            bottom: 12.0,
-                            left: 0.0,
-                            right: 0.0,
-                          ),
-                          child: Text(
-                            "Update",
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.black87,
-                            ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 0, right: 0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                "Update Profile",
+                                textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
                           ),
                         ),
+                        SizedBox(height: 20.0),
                         Container(
                           alignment: Alignment.topLeft,
                           margin: EdgeInsets.only(
-                            top: 10.0,
+                            top: 0.0,
                             bottom: 10.0,
                             left: 0.0,
                             right: 0.0,
@@ -514,27 +527,10 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         new TypeAheadFormField(
                           textFieldConfiguration: TextFieldConfiguration(
                             decoration: InputDecoration(
-                              labelText: "Province",
+                              labelText: "Select your province",
                               labelStyle: TextStyle(
                                   color: Color.fromRGBO(0, 0, 0, 0.5)),
-                              contentPadding: EdgeInsets.all(10.0),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                                borderSide: BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.white,
-                                ),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              hintText: "Enter your province",
-                              // prefixIcon: Icon(
-                              //   Icons.perm_identity,
-                              //   color: Colors.black,
-                              // ),
+                              contentPadding: EdgeInsets.all(0.0),
                               hintStyle: TextStyle(
                                 fontSize: 15.0,
                                 color: Colors.black54,
@@ -571,27 +567,10 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         new TypeAheadFormField(
                           textFieldConfiguration: TextFieldConfiguration(
                             decoration: InputDecoration(
-                              labelText: "City / Municipality",
+                              labelText: "Select your city or municipality",
                               labelStyle: TextStyle(
                                   color: Color.fromRGBO(0, 0, 0, 0.5)),
-                              contentPadding: EdgeInsets.all(10.0),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                                borderSide: BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.white,
-                                ),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              hintText: "Enter your city or municipality",
-                              // prefixIcon: Icon(
-                              //   Icons.perm_identity,
-                              //   color: Colors.black,
-                              // ),
+                              contentPadding: EdgeInsets.all(0.0),
                               hintStyle: TextStyle(
                                 fontSize: 15.0,
                                 color: Colors.black54,
@@ -628,27 +607,10 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         new TypeAheadFormField(
                           textFieldConfiguration: TextFieldConfiguration(
                             decoration: InputDecoration(
-                              labelText: "Barangay",
+                              labelText: "Select your barangay",
                               labelStyle: TextStyle(
                                   color: Color.fromRGBO(0, 0, 0, 0.5)),
-                              contentPadding: EdgeInsets.all(10.0),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                                borderSide: BorderSide(
-                                  color: Colors.white,
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.white,
-                                ),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              hintText: "Enter your barangay",
-                              // prefixIcon: Icon(
-                              //   Icons.perm_identity,
-                              //   color: Colors.black,
-                              // ),
+                              contentPadding: EdgeInsets.all(0.0),
                               hintStyle: TextStyle(
                                 fontSize: 15.0,
                                 color: Colors.black54,
@@ -698,27 +660,10 @@ class _GenerateScreenState extends State<GenerateScreen> {
                             return null;
                           },
                           decoration: InputDecoration(
-                            labelText: "House Unit / Street",
+                            labelText: "Enter your house unit or street",
                             labelStyle:
                                 TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                            contentPadding: EdgeInsets.all(10.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            hintText: "Enter your house unit or street",
-                            // prefixIcon: Icon(
-                            //   Icons.perm_identity,
-                            //   color: Colors.black,
-                            // ),
+                            contentPadding: EdgeInsets.all(0.0),
                             hintStyle: TextStyle(
                               fontSize: 15.0,
                               color: Colors.black54,
@@ -729,6 +674,9 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         new TextFormField(
                           textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.phone,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp('[0-9]')),
+                          ],
                           autofocus: false,
                           onChanged: (value) {
                             pn = value;
@@ -747,27 +695,10 @@ class _GenerateScreenState extends State<GenerateScreen> {
                               ? TextEditingController(text: "09")
                               : TextEditingController(text: pn),
                           decoration: InputDecoration(
-                            labelText: "Phone Number",
+                            labelText: "Enter your phone number",
                             labelStyle:
                                 TextStyle(color: Color.fromRGBO(0, 0, 0, 0.5)),
-                            contentPadding: EdgeInsets.all(10.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.white,
-                              ),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            hintText: "Enter your phone number",
-                            // prefixIcon: Icon(
-                            //   Icons.perm_identity,
-                            //   color: Colors.black,
-                            // ),
+                            contentPadding: EdgeInsets.all(0.0),
                             hintStyle: TextStyle(
                               fontSize: 15.0,
                               color: Colors.black54,
@@ -780,22 +711,33 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 ),
                 actions: <Widget>[
                   new FlatButton(
-                      child: _isLoading
-                          ? SizedBox(
-                              child: CircularProgressIndicator(
-                                backgroundColor: Colors.white,
-                                strokeWidth: 2.0,
-                              ),
-                              height: 15.0,
-                              width: 15.0,
-                            )
-                          : Text('Save'),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          print("Submit");
-                          submitAddress();
-                        }
-                      })
+                    height: 20,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side:
+                            BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                    color: Color.fromRGBO(236, 138, 92, 1),
+                    textColor: Colors.white,
+                    padding: EdgeInsets.all(8.0),
+                    onPressed: () {
+                      if (_formKey.currentState.validate()) {
+                        submitAddress();
+                      }
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Save',
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20),
                 ],
               ));
         });

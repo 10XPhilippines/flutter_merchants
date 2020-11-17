@@ -24,6 +24,18 @@ class _ForgotScreenState extends State<ForgotScreen>
     super.build(context);
     return Scaffold(
       key: _scaffoldKey,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios_rounded,
+            size: 18.0,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        elevation: 0.0,
+      ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(40.0, 20.0, 40.0, 0),
         child: ListView(
