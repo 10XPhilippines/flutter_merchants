@@ -121,6 +121,97 @@ class _GenerateScreenState extends State<GenerateScreen> {
     }
   }
 
+  showLoading() async {
+    await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20.0))),
+          contentPadding: const EdgeInsets.all(20.0),
+          content: new Container(
+            height: 20.0,
+            alignment: Alignment.center,
+            child: SizedBox(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                strokeWidth: 2.0,
+              ),
+              height: 15.0,
+              width: 15.0,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future submitTemperatureData() async {
+    showLoading();
+    var data = {
+      'user_id': userId,
+      'temperature': temperature,
+      'companion_code': companionId,
+    };
+    print(data);
+    try {
+      var res = await Network()
+          .authData(data, '/submit_temperature_and_fetch_user_data');
+      var body = json.decode(res.body);
+      if (body['success'] == true) {
+        Navigator.pop(context);
+        final snackBar = SnackBar(
+          duration: Duration(seconds: 3),
+          content: Container(
+            height: 18.0,
+            child: Padding(
+              padding: EdgeInsets.only(left: 0, right: 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Temperature submitted successfully.',
+                    style: TextStyle(fontSize: 15.0),
+                    textAlign: TextAlign.start,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+        );
+        _scaffoldKey.currentState.showSnackBar(snackBar);
+      }
+    } catch (e) {
+      Navigator.pop(context);
+      print(e.toString());
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 3),
+        content: Container(
+          height: 18.0,
+          child: Padding(
+            padding: EdgeInsets.only(left: 0, right: 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Unable to submit temperature.',
+                  style: TextStyle(fontSize: 15.0),
+                  textAlign: TextAlign.start,
+                ),
+              ],
+            ),
+          ),
+        ),
+        backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+      );
+      _scaffoldKey.currentState.showSnackBar(snackBar);
+    }
+  }
+
   Future submitAddress() async {
     setState(() {
       _isLoading = true;
@@ -360,7 +451,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
                   FlatButton(
-                    height: 40,
+                    height: 35,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15.0),
                         side:
@@ -431,7 +522,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
             ),
           ),
           actions: <Widget>[
-            new FlatButton(
+            FlatButton(
               height: 20,
               color: Colors.transparent,
               textColor: Color.fromRGBO(236, 138, 92, 1),
@@ -452,7 +543,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 ],
               ),
             ),
-            new FlatButton(
+            FlatButton(
               height: 20,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15.0),
@@ -461,7 +552,10 @@ class _GenerateScreenState extends State<GenerateScreen> {
               textColor: Colors.white,
               padding: EdgeInsets.all(8.0),
               onPressed: () {
-                if (_formKey2.currentState.validate()) {}
+                if (_formKey2.currentState.validate()) {
+                  Navigator.pop(context);
+                  submitTemperatureData();
+                }
               },
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -1401,8 +1495,9 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 textColor: Color.fromRGBO(236, 138, 92, 1),
                 padding: EdgeInsets.all(8.0),
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => QRExample()));
+                  // Navigator.of(context).push(
+                  //     MaterialPageRoute(builder: (context) => QRExample()));
+                  showTemperature();
                 },
                 child: Text(
                   "Scan establishment QR Code",
