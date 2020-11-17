@@ -57,7 +57,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
   String companionPhoneNumber;
   String companionTemperature;
   String e1, e2, e3, e4, e5, e6, e7, e8;
-  String pn;
+  String pn, temperature;
   bool hasAddress;
   // var rawJson = ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7'];
   var rawJson = ['No', 'No', 'No', 'No', 'No', 'No', 'No'];
@@ -324,7 +324,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                     fontWeight: FontWeight.w300),
               ),
               Text(
-                "$companionTemperature°",
+                "$companionTemperature C",
                 textAlign: TextAlign.start,
                 style: TextStyle(
                     color: Colors.black87,
@@ -404,6 +404,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                     obscureText: false,
                     onChanged: (value) {
                       print(value);
+                      temperature = value;
                     },
                     validator: (value) {
                       if (value.isEmpty) {
@@ -1172,10 +1173,15 @@ class _GenerateScreenState extends State<GenerateScreen> {
     );
   }
 
+  Future checkExitTime() async {
+    const oneSec = const Duration(seconds: 1);
+    new Timer.periodic(oneSec, (Timer t) => print('hi!'));
+  }
+
   @override
   void initState() {
     getProfile();
-
+    checkExitTime();
     super.initState();
   }
 
