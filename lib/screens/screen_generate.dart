@@ -150,7 +150,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Profile updated successfully.',
+                    'Address updated successfully.',
                     style: TextStyle(fontSize: 15.0),
                     textAlign: TextAlign.start,
                   ),
@@ -168,16 +168,26 @@ class _GenerateScreenState extends State<GenerateScreen> {
         print(body["message"]);
         Navigator.pop(context);
         final snackBar = SnackBar(
-            duration: Duration(seconds: 5),
-            content: Container(
-                height: 40.0,
-                child: Center(
-                  child: Text(
-                    'Unable to update',
-                    style: TextStyle(fontSize: 16.0),
+          duration: Duration(seconds: 3),
+          content: Container(
+            height: 18.0,
+            child: Padding(
+              padding: EdgeInsets.only(left: 0, right: 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Unable to update address.',
+                    style: TextStyle(fontSize: 15.0),
+                    textAlign: TextAlign.start,
                   ),
-                )),
-            backgroundColor: Colors.redAccent);
+                ],
+              ),
+            ),
+          ),
+          backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+        );
         _scaffoldKey.currentState.showSnackBar(snackBar);
       }
     } catch (e) {
