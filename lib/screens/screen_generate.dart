@@ -127,6 +127,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 150),
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(20.0),
@@ -172,7 +173,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Temperature submitted successfully.',
+                    'Temperature submitted successfully',
                     style: TextStyle(fontSize: 15.0),
                     textAlign: TextAlign.start,
                   ),
@@ -180,9 +181,19 @@ class _GenerateScreenState extends State<GenerateScreen> {
               ),
             ),
           ),
+          action: SnackBarAction(
+              label: 'Close',
+              textColor: Colors.white54,
+              onPressed: () {
+                _scaffoldKey.currentState.hideCurrentSnackBar();
+              }),
           backgroundColor: Color.fromRGBO(236, 138, 92, 1),
         );
         _scaffoldKey.currentState.showSnackBar(snackBar);
+        Timer(Duration(seconds: 2), () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => QRExample()));
+        });
       }
     } catch (e) {
       Navigator.pop(context);
@@ -198,7 +209,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Unable to submit temperature.',
+                  'Unable to submit temperature',
                   style: TextStyle(fontSize: 15.0),
                   textAlign: TextAlign.start,
                 ),
@@ -206,6 +217,12 @@ class _GenerateScreenState extends State<GenerateScreen> {
             ),
           ),
         ),
+        action: SnackBarAction(
+            label: 'Close',
+            textColor: Colors.white54,
+            onPressed: () {
+              _scaffoldKey.currentState.hideCurrentSnackBar();
+            }),
         backgroundColor: Color.fromRGBO(236, 138, 92, 1),
       );
       _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -244,7 +261,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Address updated successfully.',
+                    'Address updated successfully',
                     style: TextStyle(fontSize: 15.0),
                     textAlign: TextAlign.start,
                   ),
@@ -252,6 +269,12 @@ class _GenerateScreenState extends State<GenerateScreen> {
               ),
             ),
           ),
+          action: SnackBarAction(
+              label: 'Close',
+              textColor: Colors.white54,
+              onPressed: () {
+                _scaffoldKey.currentState.hideCurrentSnackBar();
+              }),
           backgroundColor: Color.fromRGBO(236, 138, 92, 1),
         );
         _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -272,7 +295,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'Unable to update address.',
+                    'Unable to update address',
                     style: TextStyle(fontSize: 15.0),
                     textAlign: TextAlign.start,
                   ),
@@ -280,6 +303,12 @@ class _GenerateScreenState extends State<GenerateScreen> {
               ),
             ),
           ),
+          action: SnackBarAction(
+              label: 'Close',
+              textColor: Colors.white54,
+              onPressed: () {
+                _scaffoldKey.currentState.hideCurrentSnackBar();
+              }),
           backgroundColor: Color.fromRGBO(236, 138, 92, 1),
         );
         _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -293,6 +322,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
   }
 
   Future submitCompanion() async {
+    Navigator.pop(context);
+    showLoading();
     setState(() {
       _isLoading = true;
     });
@@ -318,19 +349,6 @@ class _GenerateScreenState extends State<GenerateScreen> {
         });
         Navigator.pop(context);
         showTemperature();
-        // final snackBar = SnackBar(
-        //   duration: Duration(seconds: 5),
-        //   content: Container(
-        //       height: 40.0,
-        //       child: Center(
-        //         child: Text(
-        //           'Companion added: $companionFirstName $companionLastName',
-        //           style: TextStyle(fontSize: 16.0),
-        //         ),
-        //       )),
-        //   backgroundColor: Colors.greenAccent,
-        // );
-        // _scaffoldKey.currentState.showSnackBar(snackBar);
       } else {
         setState(() {
           _isLoading = false;
@@ -338,16 +356,32 @@ class _GenerateScreenState extends State<GenerateScreen> {
         print(body["message"]);
         Navigator.pop(context);
         final snackBar = SnackBar(
-            duration: Duration(seconds: 5),
-            content: Container(
-                height: 40.0,
-                child: Center(
-                  child: Text(
+          duration: Duration(seconds: 3),
+          content: Container(
+            height: 18.0,
+            child: Padding(
+              padding: EdgeInsets.only(left: 0, right: 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Text(
                     'Unable to add companion',
-                    style: TextStyle(fontSize: 16.0),
+                    style: TextStyle(fontSize: 15.0),
+                    textAlign: TextAlign.start,
                   ),
-                )),
-            backgroundColor: Colors.redAccent);
+                ],
+              ),
+            ),
+          ),
+          action: SnackBarAction(
+              label: 'Close',
+              textColor: Colors.white54,
+              onPressed: () {
+                _scaffoldKey.currentState.hideCurrentSnackBar();
+              }),
+          backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+        );
         _scaffoldKey.currentState.showSnackBar(snackBar);
       }
     } catch (e) {
@@ -483,7 +517,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                     "Temperature",
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                        color: Colors.black87,
+                        color: Color.fromRGBO(21, 26, 70, 1),
                         fontSize: 20,
                         fontWeight: FontWeight.w500),
                   ),
@@ -599,8 +633,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
                         Padding(
                           padding: EdgeInsets.only(left: 0, right: 0),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
                                 "Update Profile",
@@ -632,6 +666,16 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           ),
                         ),
                         SizedBox(height: 20.0),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Province",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
                         new TypeAheadFormField(
                           textFieldConfiguration: TextFieldConfiguration(
                             decoration: InputDecoration(
@@ -672,6 +716,17 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           onSaved: (value) => this.p.text = value,
                         ),
                         SizedBox(height: 15.0),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "City / Municipality",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
                         new TypeAheadFormField(
                           textFieldConfiguration: TextFieldConfiguration(
                             decoration: InputDecoration(
@@ -712,6 +767,17 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           onSaved: (value) => this.m.text = value,
                         ),
                         SizedBox(height: 15.0),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Barangay",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
                         new TypeAheadFormField(
                           textFieldConfiguration: TextFieldConfiguration(
                             decoration: InputDecoration(
@@ -752,6 +818,16 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           onSaved: (value) => this.b.text = value,
                         ),
                         SizedBox(height: 15.0),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "House Unit No. / Street No. / Purok",
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
                         new TextFormField(
                           initialValue: s.text,
                           textInputAction: TextInputAction.next,
@@ -779,6 +855,17 @@ class _GenerateScreenState extends State<GenerateScreen> {
                           ),
                         ),
                         SizedBox(height: 15.0),
+                        Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            "Phone Number",
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
                         new TextFormField(
                           textInputAction: TextInputAction.next,
                           keyboardType: TextInputType.phone,

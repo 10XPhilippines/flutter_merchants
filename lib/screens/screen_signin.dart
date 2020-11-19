@@ -61,10 +61,21 @@ class _SigninScreenState extends State<SigninScreen>
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Login failed"),
-                content: Text(message),
+                // title: Text("Login failed"),
+                content: Text("$message Please try again."),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
+                contentPadding: const EdgeInsets.all(20.0),
                 actions: <Widget>[
                   new FlatButton(
+                      height: 20,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15.0),
+                          side: BorderSide(
+                              color: Color.fromRGBO(236, 138, 92, 1))),
+                      color: Color.fromRGBO(236, 138, 92, 1),
+                      textColor: Colors.white,
+                      padding: EdgeInsets.all(8.0),
                       child: const Text('OK'),
                       onPressed: () {
                         Navigator.pop(context);
@@ -146,13 +157,17 @@ class _SigninScreenState extends State<SigninScreen>
               padding: EdgeInsets.only(left: 30, right: 30),
               onPressed: () {},
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.g_translate),
-                      color: Colors.blue,
-                      onPressed: () {}),
+                  // IconButton(
+                  //     icon: Icon(Icons.g_translate),
+                  //     color: Colors.blue,
+                  //     onPressed: () {}),
+                  Image.asset(
+                    'assets/fb.png',
+                    height: 25,
+                  ),
                   Text(
                     "Continue with Facebook",
                     style: TextStyle(
@@ -174,12 +189,13 @@ class _SigninScreenState extends State<SigninScreen>
               padding: EdgeInsets.only(left: 30, right: 30),
               onPressed: () {},
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.g_translate),
-                      color: Colors.redAccent,
-                      onPressed: () {}),
+                  Image.asset(
+                    'assets/google.png',
+                    height: 25,
+                  ),
                   Text(
                     "Continue with Google",
                     style: TextStyle(
@@ -312,22 +328,18 @@ class _SigninScreenState extends State<SigninScreen>
                       ),
                     ),
                     SizedBox(height: 20.0),
-                    FlatButton(
-                      height: 50,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25.0),
-                          side: BorderSide(
-                              color: Color.fromRGBO(236, 138, 92, 1))),
-                      color: Color.fromRGBO(236, 138, 92, 1),
-                      textColor: Colors.white,
-                      padding: EdgeInsets.all(8.0),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          _login();
-                        }
-                      },
-                      child: _isLoading
-                          ? Center(
+                    _isLoading
+                        ? FlatButton(
+                            height: 50,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                                side: BorderSide(
+                                    color: Color.fromRGBO(236, 138, 92, 1))),
+                            color: Color.fromRGBO(236, 138, 92, 1),
+                            textColor: Colors.white,
+                            padding: EdgeInsets.all(8.0),
+                            onPressed: null,
+                            child: Center(
                               child: SizedBox(
                                 child: CircularProgressIndicator(
                                   backgroundColor: Colors.white,
@@ -336,14 +348,29 @@ class _SigninScreenState extends State<SigninScreen>
                                 height: 15.0,
                                 width: 15.0,
                               ),
-                            )
-                          : Text(
+                            ),
+                          )
+                        : FlatButton(
+                            height: 50,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                                side: BorderSide(
+                                    color: Color.fromRGBO(236, 138, 92, 1))),
+                            color: Color.fromRGBO(236, 138, 92, 1),
+                            textColor: Colors.white,
+                            padding: EdgeInsets.all(8.0),
+                            onPressed: () {
+                              if (_formKey.currentState.validate()) {
+                                _login();
+                              }
+                            },
+                            child: Text(
                               'Sign in',
                               style: TextStyle(
                                 fontSize: 14,
                               ),
                             ),
-                    ),
+                          ),
                   ],
                 ),
               ),

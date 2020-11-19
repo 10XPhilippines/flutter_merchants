@@ -63,12 +63,10 @@ class _SignupScreenState extends State<SignupScreen>
               padding: EdgeInsets.only(left: 30, right: 30),
               onPressed: () {},
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.g_translate),
-                      color: Colors.blue,
-                      onPressed: () {}),
+                  Image.asset('assets/fb.png', height: 25,),
                   Text(
                     "Continue with Facebook",
                     style: TextStyle(
@@ -90,12 +88,10 @@ class _SignupScreenState extends State<SignupScreen>
               padding: EdgeInsets.only(left: 30, right: 30),
               onPressed: () {},
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  IconButton(
-                      icon: Icon(Icons.g_translate),
-                      color: Colors.redAccent,
-                      onPressed: () {}),
+                  Image.asset('assets/google.png', height: 25,),
                   Text(
                     "Continue with Google",
                     style: TextStyle(
