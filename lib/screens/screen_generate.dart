@@ -14,11 +14,13 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter_merchants/models/province.dart';
 import 'package:flutter_merchants/models/city.dart';
 import 'package:flutter_merchants/models/barangay.dart';
+import 'package:toast/toast.dart';
 import 'package:twitter_qr_scanner/twitter_qr_scanner.dart';
 import 'package:twitter_qr_scanner/QrScannerOverlayShape.dart';
 
 var merchantQrData;
 bool merchantQrDataHasValue = false;
+bool noMerchantQrFound = false;
 
 class GenerateScreen extends StatefulWidget {
   @override
@@ -162,34 +164,36 @@ class _GenerateScreenState extends State<GenerateScreen> {
       var body = json.decode(res.body);
       if (body['success'] == true) {
         Navigator.pop(context);
-        final snackBar = SnackBar(
-          duration: Duration(seconds: 3),
-          content: Container(
-            height: 18.0,
-            child: Padding(
-              padding: EdgeInsets.only(left: 0, right: 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Temperature submitted successfully',
-                    style: TextStyle(fontSize: 15.0),
-                    textAlign: TextAlign.start,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          action: SnackBarAction(
-              label: 'Close',
-              textColor: Colors.white54,
-              onPressed: () {
-                _scaffoldKey.currentState.hideCurrentSnackBar();
-              }),
-          backgroundColor: Color.fromRGBO(236, 138, 92, 1),
-        );
-        _scaffoldKey.currentState.showSnackBar(snackBar);
+        Toast.show("Temperature submitted successfully", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        // final snackBar = SnackBar(
+        //   duration: Duration(seconds: 3),
+        //   content: Container(
+        //     height: 18.0,
+        //     child: Padding(
+        //       padding: EdgeInsets.only(left: 0, right: 0),
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //         crossAxisAlignment: CrossAxisAlignment.center,
+        //         children: <Widget>[
+        //           Text(
+        //             'Temperature submitted successfully',
+        //             style: TextStyle(fontSize: 15.0),
+        //             textAlign: TextAlign.start,
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        //   action: SnackBarAction(
+        //       label: 'Close',
+        //       textColor: Colors.white54,
+        //       onPressed: () {
+        //         _scaffoldKey.currentState.hideCurrentSnackBar();
+        //       }),
+        //   backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+        // );
+        // _scaffoldKey.currentState.showSnackBar(snackBar);
         Timer(Duration(seconds: 2), () {
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => QRExample()));
@@ -198,38 +202,42 @@ class _GenerateScreenState extends State<GenerateScreen> {
     } catch (e) {
       Navigator.pop(context);
       print(e.toString());
-      final snackBar = SnackBar(
-        duration: Duration(seconds: 3),
-        content: Container(
-          height: 18.0,
-          child: Padding(
-            padding: EdgeInsets.only(left: 0, right: 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Unable to submit temperature',
-                  style: TextStyle(fontSize: 15.0),
-                  textAlign: TextAlign.start,
-                ),
-              ],
-            ),
-          ),
-        ),
-        action: SnackBarAction(
-            label: 'Close',
-            textColor: Colors.white54,
-            onPressed: () {
-              _scaffoldKey.currentState.hideCurrentSnackBar();
-            }),
-        backgroundColor: Color.fromRGBO(236, 138, 92, 1),
-      );
-      _scaffoldKey.currentState.showSnackBar(snackBar);
+      Toast.show("Unable to submit temperature", context,
+          duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+      // final snackBar = SnackBar(
+      //   duration: Duration(seconds: 3),
+      //   content: Container(
+      //     height: 18.0,
+      //     child: Padding(
+      //       padding: EdgeInsets.only(left: 0, right: 0),
+      //       child: Row(
+      //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //         crossAxisAlignment: CrossAxisAlignment.center,
+      //         children: <Widget>[
+      //           Text(
+      //             'Unable to submit temperature',
+      //             style: TextStyle(fontSize: 15.0),
+      //             textAlign: TextAlign.start,
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   ),
+      //   action: SnackBarAction(
+      //       label: 'Close',
+      //       textColor: Colors.white54,
+      //       onPressed: () {
+      //         _scaffoldKey.currentState.hideCurrentSnackBar();
+      //       }),
+      //   backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+      // );
+      // _scaffoldKey.currentState.showSnackBar(snackBar);
     }
   }
 
   Future submitAddress() async {
+    Navigator.pop(context);
+    showLoading();
     setState(() {
       _isLoading = true;
     });
@@ -250,68 +258,73 @@ class _GenerateScreenState extends State<GenerateScreen> {
           _isLoading = false;
         });
         Navigator.pop(context);
-        final snackBar = SnackBar(
-          duration: Duration(seconds: 3),
-          content: Container(
-            height: 18.0,
-            child: Padding(
-              padding: EdgeInsets.only(left: 0, right: 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Address updated successfully',
-                    style: TextStyle(fontSize: 15.0),
-                    textAlign: TextAlign.start,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          action: SnackBarAction(
-              label: 'Close',
-              textColor: Colors.white54,
-              onPressed: () {
-                _scaffoldKey.currentState.hideCurrentSnackBar();
-              }),
-          backgroundColor: Color.fromRGBO(236, 138, 92, 1),
-        );
-        _scaffoldKey.currentState.showSnackBar(snackBar);
+        Toast.show("Address updated successfully", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        // final snackBar = SnackBar(
+        //   duration: Duration(seconds: 3),
+        //   content: Container(
+        //     height: 18.0,
+        //     child: Padding(
+        //       padding: EdgeInsets.only(left: 0, right: 0),
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //         crossAxisAlignment: CrossAxisAlignment.center,
+        //         children: <Widget>[
+        //           Text(
+        //             'Address updated successfully',
+        //             style: TextStyle(fontSize: 15.0),
+        //             textAlign: TextAlign.start,
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        //   action: SnackBarAction(
+        //       label: 'Close',
+        //       textColor: Colors.white54,
+        //       onPressed: () {
+        //         _scaffoldKey.currentState.hideCurrentSnackBar();
+        //       }),
+        //   backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+        // );
+        // _scaffoldKey.currentState.showSnackBar(snackBar);
       } else {
         setState(() {
           _isLoading = false;
         });
         print(body["message"]);
         Navigator.pop(context);
-        final snackBar = SnackBar(
-          duration: Duration(seconds: 3),
-          content: Container(
-            height: 18.0,
-            child: Padding(
-              padding: EdgeInsets.only(left: 0, right: 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Unable to update address',
-                    style: TextStyle(fontSize: 15.0),
-                    textAlign: TextAlign.start,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          action: SnackBarAction(
-              label: 'Close',
-              textColor: Colors.white54,
-              onPressed: () {
-                _scaffoldKey.currentState.hideCurrentSnackBar();
-              }),
-          backgroundColor: Color.fromRGBO(236, 138, 92, 1),
-        );
-        _scaffoldKey.currentState.showSnackBar(snackBar);
+        Toast.show("Unable to update address", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+
+        // final snackBar = SnackBar(
+        //   duration: Duration(seconds: 3),
+        //   content: Container(
+        //     height: 18.0,
+        //     child: Padding(
+        //       padding: EdgeInsets.only(left: 0, right: 0),
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //         crossAxisAlignment: CrossAxisAlignment.center,
+        //         children: <Widget>[
+        //           Text(
+        //             'Unable to update address',
+        //             style: TextStyle(fontSize: 15.0),
+        //             textAlign: TextAlign.start,
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        //   action: SnackBarAction(
+        //       label: 'Close',
+        //       textColor: Colors.white54,
+        //       onPressed: () {
+        //         _scaffoldKey.currentState.hideCurrentSnackBar();
+        //       }),
+        //   backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+        // );
+        // _scaffoldKey.currentState.showSnackBar(snackBar);
       }
     } catch (e) {
       print(e.toString());
@@ -355,34 +368,36 @@ class _GenerateScreenState extends State<GenerateScreen> {
         });
         print(body["message"]);
         Navigator.pop(context);
-        final snackBar = SnackBar(
-          duration: Duration(seconds: 3),
-          content: Container(
-            height: 18.0,
-            child: Padding(
-              padding: EdgeInsets.only(left: 0, right: 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Unable to add companion',
-                    style: TextStyle(fontSize: 15.0),
-                    textAlign: TextAlign.start,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          action: SnackBarAction(
-              label: 'Close',
-              textColor: Colors.white54,
-              onPressed: () {
-                _scaffoldKey.currentState.hideCurrentSnackBar();
-              }),
-          backgroundColor: Color.fromRGBO(236, 138, 92, 1),
-        );
-        _scaffoldKey.currentState.showSnackBar(snackBar);
+        Toast.show("Unable to add companion", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
+        // final snackBar = SnackBar(
+        //   duration: Duration(seconds: 3),
+        //   content: Container(
+        //     height: 18.0,
+        //     child: Padding(
+        //       padding: EdgeInsets.only(left: 0, right: 0),
+        //       child: Row(
+        //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //         crossAxisAlignment: CrossAxisAlignment.center,
+        //         children: <Widget>[
+        //           Text(
+        //             'Unable to add companion',
+        //             style: TextStyle(fontSize: 15.0),
+        //             textAlign: TextAlign.start,
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        //   action: SnackBarAction(
+        //       label: 'Close',
+        //       textColor: Colors.white54,
+        //       onPressed: () {
+        //         _scaffoldKey.currentState.hideCurrentSnackBar();
+        //       }),
+        //   backgroundColor: Color.fromRGBO(236, 138, 92, 1),
+        // );
+        // _scaffoldKey.currentState.showSnackBar(snackBar);
       }
     } catch (e) {
       print(e.toString());
@@ -955,27 +970,30 @@ class _GenerateScreenState extends State<GenerateScreen> {
                   children: <Widget>[
                     Padding(
                       padding: EdgeInsets.only(left: 0, right: 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Adding Companion",
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 20,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.close),
-                            color: Color.fromRGBO(236, 138, 92, 1),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              showTemperature();
-                            },
-                          ),
-                        ],
+                      child: FittedBox(
+                        fit: BoxFit.fitWidth,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "Adding Companion",
+                              textAlign: TextAlign.right,
+                              style: TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.close),
+                              color: Color.fromRGBO(236, 138, 92, 1),
+                              onPressed: () {
+                                Navigator.pop(context);
+                                showTemperature();
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(height: 20.0),
@@ -1437,6 +1455,75 @@ class _GenerateScreenState extends State<GenerateScreen> {
           ),
         ),
       );
+    } else if (noMerchantQrFound == true) {
+      return Scaffold(
+        key: _scaffoldKey,
+        body: Padding(
+          padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
+          child: ListView(
+            physics: BouncingScrollPhysics(),
+            shrinkWrap: true,
+            children: <Widget>[
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(children: <TextSpan>[
+                  TextSpan(
+                      text: "10X ",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(236, 138, 92, 1))),
+                  TextSpan(
+                      text: "Wait Lang",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromRGBO(21, 26, 70, 1))),
+                ]),
+              ),
+              SizedBox(height: 70),
+              Center(
+                child: Text(
+                  "Error!",
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 40,
+                      fontWeight: FontWeight.w700),
+                ),
+              ),
+              SizedBox(height: 50),
+              Center(
+                child: Icon(Icons.error_outline,
+                    size: 200, color: Color.fromRGBO(21, 26, 70, 1)),
+              ),
+              SizedBox(height: 60),
+              Padding(
+                padding: EdgeInsets.only(left: 25, right: 25),
+                child: FlatButton(
+                  height: 50,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25.0),
+                      side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                  color: Color.fromRGBO(236, 138, 92, 1),
+                  textColor: Colors.white,
+                  padding: EdgeInsets.all(8.0),
+                  onPressed: () {
+                    Navigator.of(context).push(
+                        MaterialPageRoute(builder: (context) => QRExample()));
+                  },
+                  child: Text(
+                    "Try Again",
+                    style: TextStyle(
+                      fontSize: 14.0,
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: 30.0),
+            ],
+          ),
+        ),
+      );
     } else {
       return Scaffold(
         key: _scaffoldKey,
@@ -1623,6 +1710,20 @@ class _QRExampleState extends State<QRExample> {
   GlobalKey qrKey = GlobalKey();
   QRViewController controller;
 
+  Future getQrMerchant(String merchantQr) async {
+    var res = await Network().getData('/user_scan_merchant/' + merchantQr);
+    var body = json.decode(res.body);
+
+    if (body["success"] == true) {
+      print(body["id"]["id"]);
+      merchantQrDataHasValue = true;
+    } else {
+      print(body["message"]);
+      merchantQrDataHasValue = false;
+      noMerchantQrFound = true;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -1656,7 +1757,7 @@ class _QRExampleState extends State<QRExample> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         merchantQrData = scanData;
-        merchantQrDataHasValue = true;
+        getQrMerchant(scanData);
         dispose();
         Route route = MaterialPageRoute(builder: (context) => GenerateScreen());
         Navigator.pushReplacement(context, route);
