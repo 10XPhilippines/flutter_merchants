@@ -15,6 +15,8 @@
 - [X] <s>Add list view history of scanned QR per businness</s>
 - [X] <s>Add survey questions in merchant app</s>
 - [X] <s>Add visited establishments with companion</s>
+- [X] <s>Generate user dynamic QR code</s>
+- [ ] Scanning of merchant QR code
 
 ## 🔖 LICENCE
 [Apache-2.0](https://github.com/isaacdarcilla/flutter_merchants/blob/master/LICENSE)
