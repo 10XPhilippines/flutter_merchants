@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/services.dart';
+import 'package:flutter_merchants/screens/screen_checkout.dart';
 import 'package:flutter_merchants/screens/screen_scanned.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +20,11 @@ import 'package:twitter_qr_scanner/twitter_qr_scanner.dart';
 import 'package:twitter_qr_scanner/QrScannerOverlayShape.dart';
 
 var merchantQrData;
+var merchantQrId;
+bool successInitializer = false;
 bool merchantQrDataHasValue = false;
 bool noMerchantQrFound = false;
+bool checkoutShared = false;
 
 class GenerateScreen extends StatefulWidget {
   @override
@@ -1375,14 +1379,55 @@ class _GenerateScreenState extends State<GenerateScreen> {
     );
   }
 
-  Future checkExitTime() async {
-    const oneSec = const Duration(seconds: 1);
-    new Timer.periodic(oneSec, (Timer t) => print('hi!'));
+  // Future checkExitTime() async {
+  //   const oneSec = const Duration(seconds: 1);
+  //   new Timer.periodic(oneSec, (Timer t) => print('hi!'));
+  // }
+
+  Future updateLatestUserTrace() async {
+    Timer(Duration(seconds: 3), () async {
+      if (successInitializer == true) {
+        showLoading();
+        print("updateLatestUserTrace");
+        var res = await Network()
+            .getData('/merchant_scan_success/$userId/$merchantQrId');
+        var body = json.decode(res.body);
+
+        if (body["success"] == true) {
+          Navigator.pop(context);
+        } else {
+          noMerchantQrFound = true;
+        }
+      }
+    });
+  }
+
+  Future gotoCheckoutAndSaveSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("checkout", "false");
+    setState(() {
+      checkoutShared = true;
+    });
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => CheckOutScreen()));
+  }
+
+  Future checkIfCheckoutSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String checkout = prefs.getString("checkout");
+    print("Checkout: $checkout");
+    print("checkoutShared: $checkoutShared");
+    setState(() {
+      checkoutShared = true;
+    });
+    return checkout;
   }
 
   @override
   void initState() {
     getProfile();
+    updateLatestUserTrace();
+    checkIfCheckoutSharedPref();
     // checkExitTime();
     super.initState();
   }
@@ -1441,7 +1486,9 @@ class _GenerateScreenState extends State<GenerateScreen> {
                   color: Color.fromRGBO(236, 138, 92, 1),
                   textColor: Colors.white,
                   padding: EdgeInsets.all(8.0),
-                  onPressed: () {},
+                  onPressed: () {
+                    gotoCheckoutAndSaveSharedPref();
+                  },
                   child: Text(
                     "Okay",
                     style: TextStyle(
@@ -1716,6 +1763,8 @@ class _QRExampleState extends State<QRExample> {
 
     if (body["success"] == true) {
       print(body["id"]["id"]);
+      merchantQrId = body["id"]["id"];
+      successInitializer = true;
       merchantQrDataHasValue = true;
     } else {
       print(body["message"]);

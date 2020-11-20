@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_merchants/screens/screen_checkout.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_merchants/providers/app_provider.dart';
 import 'package:flutter_merchants/util/const.dart';
@@ -9,6 +10,8 @@ import 'screens/splash.dart';
 import 'util/const.dart';
 
 import 'screens/profile.dart';
+
+
 
 void main() {
   runApp(
@@ -47,10 +50,23 @@ class CheckAuth extends StatefulWidget {
 
 class _CheckAuthState extends State<CheckAuth> {
   bool isAuth = false;
+  bool checkoutShared = false;
   @override
   void initState() {
+    checkIfCheckoutSharedPref();
     _checkIfLoggedIn();
+    
     super.initState();
+  }
+
+  Future checkIfCheckoutSharedPref() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String checkout = prefs.getString("checkout");
+    print("Checkout: $checkout");
+    print("checkoutShared: $checkoutShared");
+    setState(() {
+      checkoutShared = true;
+    });
   }
 
   void _checkIfLoggedIn() async {
@@ -76,6 +92,8 @@ class _CheckAuthState extends State<CheckAuth> {
           ),
         );
       });
+    } else if (checkoutShared == true) {
+      child = CheckOutScreen();
     } else {
       child = SplashScreen();
     }

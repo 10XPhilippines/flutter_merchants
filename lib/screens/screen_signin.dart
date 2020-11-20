@@ -8,6 +8,7 @@ import 'package:flutter_merchants/screens/main_screen.dart';
 import 'package:flutter_merchants/screens/screen_signup.dart';
 import 'package:flutter_merchants/screens/screen_forgot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class SigninScreen extends StatefulWidget {
   @override
@@ -92,6 +93,8 @@ class _SigninScreenState extends State<SigninScreen>
         _isLoading = false;
       });
       print(e.toString());
+      Toast.show("Network is unreachable", context,
+            duration: Toast.LENGTH_LONG, gravity: Toast.BOTTOM);
       // final snackBar = SnackBar(
       //   duration: Duration(seconds: 5),
       //   content: Container(
