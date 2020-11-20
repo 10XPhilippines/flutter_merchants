@@ -1407,6 +1407,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
     prefs.setString("checkout", "false");
     setState(() {
       checkoutShared = true;
+      merchantQrDataHasValue = false;
+      successInitializer = false;
     });
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => CheckOutScreen()));
@@ -1417,10 +1419,13 @@ class _GenerateScreenState extends State<GenerateScreen> {
     String checkout = prefs.getString("checkout");
     print("Checkout: $checkout");
     print("checkoutShared: $checkoutShared");
-    setState(() {
-      checkoutShared = true;
-    });
-    return checkout;
+
+    if (checkout == "false") {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => CheckOutScreen()));
+    } else {
+      print("Nahh");
+    }
   }
 
   @override
@@ -1435,139 +1440,151 @@ class _GenerateScreenState extends State<GenerateScreen> {
   @override
   Widget build(BuildContext context) {
     if (merchantQrDataHasValue == true) {
-      return Scaffold(
-        key: _scaffoldKey,
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
-          child: ListView(
-            physics: BouncingScrollPhysics(),
-            shrinkWrap: true,
-            children: <Widget>[
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(children: <TextSpan>[
-                  TextSpan(
-                      text: "10X ",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromRGBO(236, 138, 92, 1))),
-                  TextSpan(
-                      text: "Wait Lang",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromRGBO(21, 26, 70, 1))),
-                ]),
-              ),
-              SizedBox(height: 70),
-              Center(
-                child: Text(
-                  "Success!",
-                  style: TextStyle(
-                      color: Color.fromRGBO(236, 138, 92, 1),
-                      fontSize: 40,
-                      fontWeight: FontWeight.w700),
+      return WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
+          key: _scaffoldKey,
+          body: Padding(
+            padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
+            child: ListView(
+              physics: BouncingScrollPhysics(),
+              shrinkWrap: true,
+              children: <Widget>[
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(children: <TextSpan>[
+                    TextSpan(
+                        text: "10X ",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Color.fromRGBO(236, 138, 92, 1))),
+                    TextSpan(
+                        text: "Wait Lang",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Color.fromRGBO(21, 26, 70, 1))),
+                  ]),
                 ),
-              ),
-              SizedBox(height: 50),
-              Center(
-                child: Icon(Icons.check_circle_outline_sharp,
-                    size: 200, color: Color.fromRGBO(21, 26, 70, 1)),
-              ),
-              SizedBox(height: 60),
-              Padding(
-                padding: EdgeInsets.only(left: 25, right: 25),
-                child: FlatButton(
-                  height: 50,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
-                  color: Color.fromRGBO(236, 138, 92, 1),
-                  textColor: Colors.white,
-                  padding: EdgeInsets.all(8.0),
-                  onPressed: () {
-                    gotoCheckoutAndSaveSharedPref();
-                  },
+                SizedBox(height: 70),
+                Center(
                   child: Text(
-                    "Okay",
+                    "Success!",
                     style: TextStyle(
-                      fontSize: 14.0,
+                        color: Color.fromRGBO(236, 138, 92, 1),
+                        fontSize: 40,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+                SizedBox(height: 50),
+                Center(
+                  child: Icon(Icons.check_circle_outline_sharp,
+                      size: 200, color: Color.fromRGBO(21, 26, 70, 1)),
+                ),
+                SizedBox(height: 60),
+                Padding(
+                  padding: EdgeInsets.only(left: 25, right: 25),
+                  child: FlatButton(
+                    height: 50,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        side:
+                            BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                    color: Color.fromRGBO(236, 138, 92, 1),
+                    textColor: Colors.white,
+                    padding: EdgeInsets.all(8.0),
+                    onPressed: () {
+                      gotoCheckoutAndSaveSharedPref();
+                    },
+                    child: Text(
+                      "Okay",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 30.0),
-            ],
+                SizedBox(height: 30.0),
+              ],
+            ),
           ),
         ),
       );
     } else if (noMerchantQrFound == true) {
-      return Scaffold(
-        key: _scaffoldKey,
-        body: Padding(
-          padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
-          child: ListView(
-            physics: BouncingScrollPhysics(),
-            shrinkWrap: true,
-            children: <Widget>[
-              RichText(
-                textAlign: TextAlign.center,
-                text: TextSpan(children: <TextSpan>[
-                  TextSpan(
-                      text: "10X ",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromRGBO(236, 138, 92, 1))),
-                  TextSpan(
-                      text: "Wait Lang",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w700,
-                          color: Color.fromRGBO(21, 26, 70, 1))),
-                ]),
-              ),
-              SizedBox(height: 70),
-              Center(
-                child: Text(
-                  "Error!",
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 40,
-                      fontWeight: FontWeight.w700),
+      return WillPopScope(
+        onWillPop: () async {
+          return false;
+        },
+        child: Scaffold(
+          key: _scaffoldKey,
+          body: Padding(
+            padding: EdgeInsets.fromLTRB(20.0, 40.0, 20.0, 0),
+            child: ListView(
+              physics: BouncingScrollPhysics(),
+              shrinkWrap: true,
+              children: <Widget>[
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(children: <TextSpan>[
+                    TextSpan(
+                        text: "10X ",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Color.fromRGBO(236, 138, 92, 1))),
+                    TextSpan(
+                        text: "Wait Lang",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700,
+                            color: Color.fromRGBO(21, 26, 70, 1))),
+                  ]),
                 ),
-              ),
-              SizedBox(height: 50),
-              Center(
-                child: Icon(Icons.error_outline,
-                    size: 200, color: Color.fromRGBO(21, 26, 70, 1)),
-              ),
-              SizedBox(height: 60),
-              Padding(
-                padding: EdgeInsets.only(left: 25, right: 25),
-                child: FlatButton(
-                  height: 50,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
-                  color: Color.fromRGBO(236, 138, 92, 1),
-                  textColor: Colors.white,
-                  padding: EdgeInsets.all(8.0),
-                  onPressed: () {
-                    Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => QRExample()));
-                  },
+                SizedBox(height: 70),
+                Center(
                   child: Text(
-                    "Try Again",
+                    "Error!",
                     style: TextStyle(
-                      fontSize: 14.0,
+                        color: Colors.red,
+                        fontSize: 40,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+                SizedBox(height: 50),
+                Center(
+                  child: Icon(Icons.error_outline,
+                      size: 200, color: Color.fromRGBO(21, 26, 70, 1)),
+                ),
+                SizedBox(height: 60),
+                Padding(
+                  padding: EdgeInsets.only(left: 25, right: 25),
+                  child: FlatButton(
+                    height: 50,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        side:
+                            BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                    color: Color.fromRGBO(236, 138, 92, 1),
+                    textColor: Colors.white,
+                    padding: EdgeInsets.all(8.0),
+                    onPressed: () {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => QRExample()));
+                    },
+                    child: Text(
+                      "Try Again",
+                      style: TextStyle(
+                        fontSize: 14.0,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 30.0),
-            ],
+                SizedBox(height: 30.0),
+              ],
+            ),
           ),
         ),
       );

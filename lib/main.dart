@@ -53,7 +53,7 @@ class _CheckAuthState extends State<CheckAuth> {
   bool checkoutShared = false;
   @override
   void initState() {
-    checkIfCheckoutSharedPref();
+    // checkIfCheckoutSharedPref();
     _checkIfLoggedIn();
     
     super.initState();
@@ -92,8 +92,6 @@ class _CheckAuthState extends State<CheckAuth> {
           ),
         );
       });
-    } else if (checkoutShared == true) {
-      child = CheckOutScreen();
     } else {
       child = SplashScreen();
     }
