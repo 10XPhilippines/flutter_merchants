@@ -497,6 +497,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
               borderRadius: BorderRadius.all(Radius.circular(20.0))),
           contentPadding: const EdgeInsets.all(20.0),
           content: new SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Form(
               key: _formKey2,
               child: Column(
@@ -556,6 +557,8 @@ class _GenerateScreenState extends State<GenerateScreen> {
                     validator: (value) {
                       if (value.isEmpty) {
                         return 'The field is required.';
+                      } else if (value.length < 2) {
+                        return 'The field is must be 2 characters.';
                       }
                       return null;
                     },
@@ -957,6 +960,12 @@ class _GenerateScreenState extends State<GenerateScreen> {
         });
   }
 
+  void clearCompanionOnCancel() {
+    setState(() {
+      companionFirstName = null;
+    });
+  }
+
   addCompanion() async {
     await showDialog<String>(
       context: context,
@@ -993,6 +1002,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
                               color: Color.fromRGBO(236, 138, 92, 1),
                               onPressed: () {
                                 Navigator.pop(context);
+                                clearCompanionOnCancel();
                                 showTemperature();
                               },
                             ),
@@ -1332,6 +1342,7 @@ class _GenerateScreenState extends State<GenerateScreen> {
             padding: EdgeInsets.all(8.0),
             onPressed: () {
               Navigator.pop(context);
+              clearCompanionOnCancel();
               showTemperature();
             },
             child: Row(
