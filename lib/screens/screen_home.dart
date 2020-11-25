@@ -252,13 +252,27 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                         fontWeight: FontWeight.w500),
                   ),
                   SizedBox(height: 20),
-                  Text(
-                    "Alphabetical",
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Alphabetical",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      Text(
+                        "s",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal),
+                      ),
+                    ],
                   ),
                   Divider(),
                   Text(
@@ -466,11 +480,14 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(
-                          "Best Deals For You",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w800,
+                        Padding(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text(
+                            "Best Deals For You",
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                         ),
                         FlatButton(
