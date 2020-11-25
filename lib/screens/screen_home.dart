@@ -17,6 +17,11 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final _formKey2 = GlobalKey<FormState>();
 
+  @override
+  void initState() {
+    super.initState();
+  }
+
   showFilter() async {
     await showDialog<String>(
       context: context,
@@ -32,92 +37,280 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
               key: _formKey2,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Padding(
-                    padding: EdgeInsets.only(left: 0, right: 0),
-                    child: FittedBox(
-                      fit: BoxFit.fitWidth,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          IconButton(
-                            icon: Icon(Icons.keyboard_backspace),
-                            color: Color.fromRGBO(236, 138, 92, 1),
-                            onPressed: () {
+                    padding: EdgeInsets.only(left: 0, right: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.keyboard_backspace),
+                          color: Color.fromRGBO(236, 138, 92, 1),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                        Text(
+                          "Reset",
+                          textAlign: TextAlign.end,
+                          style: TextStyle(
+                              color: Colors.blue,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    "Search Filter",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(height: 10),
+                  FittedBox(
+                    fit: BoxFit.contain,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        FlatButton(
+                          height: 20,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              side: BorderSide(color: Colors.transparent)),
+                          color: Color.fromRGBO(236, 138, 92, 1),
+                          textColor: Colors.white,
+                          padding: EdgeInsets.all(8.0),
+                          onPressed: () {
+                            if (_formKey2.currentState.validate()) {
                               Navigator.pop(context);
-                            },
+                            }
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'All',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            height: 30,
+                        ),
+                        Text(" "),
+                        FlatButton(
+                          height: 20,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              side: BorderSide(
+                                  color: Color.fromRGBO(236, 138, 92, 1))),
+                          color: Colors.transparent,
+                          textColor: Color.fromRGBO(236, 138, 92, 1),
+                          padding: EdgeInsets.all(8.0),
+                          onPressed: () {
+                            if (_formKey2.currentState.validate()) {
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Featured',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                          Text(
-                            "Reset",
-                            textAlign: TextAlign.right,
-                            style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500),
+                        ),
+                        Text(" "),
+                        FlatButton(
+                          height: 20,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              side: BorderSide(
+                                  color: Color.fromRGBO(236, 138, 92, 1))),
+                          color: Colors.transparent,
+                          textColor: Color.fromRGBO(236, 138, 92, 1),
+                          padding: EdgeInsets.all(8.0),
+                          onPressed: () {
+                            if (_formKey2.currentState.validate()) {
+                              Navigator.pop(context);
+                            }
+                          },
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Deals',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  FittedBox(
+                    fit: BoxFit.contain,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        FlatButton(
+                          height: 20,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              side: BorderSide(
+                                  color: Color.fromRGBO(236, 138, 92, 1))),
+                          color: Colors.transparent,
+                          textColor: Color.fromRGBO(236, 138, 92, 1),
+                          padding: EdgeInsets.all(8.0),
+                          onPressed: () {},
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                'Business',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(" "),
+                        FlatButton(
+                          height: 20,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              side: BorderSide(color: Colors.transparent)),
+                          color: Colors.transparent,
+                          textColor: Colors.white,
+                          padding: EdgeInsets.all(8.0),
+                          onPressed: null,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                '',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(" "),
+                        FlatButton(
+                          height: 20,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15.0),
+                              side: BorderSide(color: Colors.transparent)),
+                          color: Colors.transparent,
+                          textColor: Colors.white,
+                          padding: EdgeInsets.all(8.0),
+                          onPressed: null,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              Text(
+                                '',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 15),
+                  Text(
+                    "Sort By",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Alphabetical",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  Divider(),
+                  Text(
+                    "Nearest to me",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  Divider(),
+                  Text(
+                    "Premuim",
+                    textAlign: TextAlign.end,
+                    style: TextStyle(
+                        color: Colors.black87,
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal),
+                  ),
+                  Divider(),
+                  SizedBox(height: 20),
+                  FlatButton(
+                    height: 20,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15.0),
+                        side:
+                            BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
+                    color: Color.fromRGBO(236, 138, 92, 1),
+                    textColor: Colors.white,
+                    padding: EdgeInsets.all(8.0),
+                    onPressed: () {
+                      if (_formKey2.currentState.validate()) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Apply',
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
           ),
-          actions: <Widget>[
-            FlatButton(
-              height: 20,
-              color: Colors.transparent,
-              textColor: Color.fromRGBO(236, 138, 92, 1),
-              padding: EdgeInsets.all(8.0),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            FlatButton(
-              height: 20,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15.0),
-                  side: BorderSide(color: Color.fromRGBO(236, 138, 92, 1))),
-              color: Color.fromRGBO(236, 138, 92, 1),
-              textColor: Colors.white,
-              padding: EdgeInsets.all(8.0),
-              onPressed: () {
-                if (_formKey2.currentState.validate()) {
-                  Navigator.pop(context);
-                }
-              },
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Submit',
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 20),
-          ],
         );
       },
     );
@@ -265,6 +458,42 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                         ),
                       ),
                     ]),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    SizedBox(height: 200),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text(
+                          "Best Deals For You",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        FlatButton(
+                          child: Text(
+                            "View More",
+                            style: TextStyle(
+                              color: Colors.blue,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return DishesScreen();
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             )),
       ),
