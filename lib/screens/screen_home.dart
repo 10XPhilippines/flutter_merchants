@@ -253,8 +253,8 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                   ),
                   SizedBox(height: 20),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "Alphabetical",
@@ -264,33 +264,49 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                             fontSize: 14,
                             fontWeight: FontWeight.normal),
                       ),
+                      InkWell(
+                        child: Icon(Icons.check, size: 18.0),
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                  Divider(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       Text(
-                        "s",
+                        "Nearest to me",
                         textAlign: TextAlign.end,
                         style: TextStyle(
                             color: Colors.black87,
                             fontSize: 14,
                             fontWeight: FontWeight.normal),
                       ),
+                      InkWell(
+                        child: Icon(Icons.check, size: 18.0),
+                        onTap: () {},
+                      ),
                     ],
                   ),
                   Divider(),
-                  Text(
-                    "Nearest to me",
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal),
-                  ),
-                  Divider(),
-                  Text(
-                    "Premuim",
-                    textAlign: TextAlign.end,
-                    style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 14,
-                        fontWeight: FontWeight.normal),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Premium",
+                        textAlign: TextAlign.end,
+                        style: TextStyle(
+                            color: Colors.black87,
+                            fontSize: 14,
+                            fontWeight: FontWeight.normal),
+                      ),
+                      InkWell(
+                        child: Icon(Icons.check, size: 18.0),
+                        onTap: () {},
+                      ),
+                    ],
                   ),
                   Divider(),
                   SizedBox(height: 20),
@@ -457,6 +473,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                                     showFilter();
                                   },
                                   icon: Icon(Icons.filter_list),
+                                  color: Colors.black54,
                                 ),
                                 hintStyle: TextStyle(
                                   fontSize: 17.0,
@@ -476,7 +493,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    SizedBox(height: 200),
+                    SizedBox(height: 220),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -490,24 +507,46 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                             ),
                           ),
                         ),
-                        FlatButton(
-                          child: Text(
-                            "View More",
-                            style: TextStyle(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return DishesScreen();
-                                },
+                        Row(children: <Widget>[
+                          InkWell(
+                            child: Text(
+                              "See All",
+                              style: TextStyle(
+                                color: Colors.blue,
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) {
+                                    return DishesScreen();
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          Icon(Icons.keyboard_arrow_right),
+                        ])
                       ],
+                    ),
+                    SizedBox(height: 20),
+                    Container(
+                      height: 65.0,
+                      child: ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemCount: categories == null ? 0 : categories.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          Map cat = categories[index];
+                          return HomeCategory(
+                            icon: cat['icon'],
+                            title: cat['name'],
+                            items: cat['items'].toString(),
+                            isHome: true,
+                          );
+                        },
+                      ),
                     ),
                   ],
                 ),

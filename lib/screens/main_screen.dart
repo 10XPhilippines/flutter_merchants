@@ -17,6 +17,8 @@ import 'package:flutter_merchants/screens/questions.dart';
 import 'package:flutter_merchants/screens/otp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'home.dart';
+
 class MainScreen extends StatefulWidget {
   @override
   _MainScreenState createState() => _MainScreenState();
@@ -115,7 +117,7 @@ class _MainScreenState extends State<MainScreen> {
           children: <Widget>[
             // Profile(),
             // HistoryScreen(),
-            // Home(),
+            
             // FavoriteScreen(),
             // SearchScreen(),
             // CartScreen(),
@@ -123,6 +125,7 @@ class _MainScreenState extends State<MainScreen> {
             GenerateScreen(),
             //Profile(),
             ProfileScreen(),
+            //Home1(),
           ],
         ),
 

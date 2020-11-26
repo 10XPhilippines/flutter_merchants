@@ -8,12 +8,12 @@ import 'package:flutter_merchants/util/categories.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 
-class Home extends StatefulWidget {
+class Home1 extends StatefulWidget {
   @override
-  _HomeState createState() => _HomeState();
+  _Home1State createState() => _Home1State();
 }
 
-class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home>{
+class _Home1State extends State<Home1> with AutomaticKeepAliveClientMixin<Home1>{
 
   List<T> map<T>(List list, Function handler) {
     List<T> result = [];
