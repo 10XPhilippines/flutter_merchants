@@ -531,7 +531,7 @@ class _HomeState extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
                     ),
                     SizedBox(height: 20),
                     Container(
-                      height: 65.0,
+                      height: 100.0,
                       child: ListView.builder(
                         physics: BouncingScrollPhysics(),
                         scrollDirection: Axis.horizontal,

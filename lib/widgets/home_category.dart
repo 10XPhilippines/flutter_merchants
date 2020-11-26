@@ -46,10 +46,10 @@ class _HomeCategoryState extends State<HomeCategory> {
             child: Column(
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.only(left: 0.0, right: 10.0),
-                  child: Icon(
-                    widget.icon,
-                    color: Theme.of(context).accentColor,
+                  padding: EdgeInsets.all(0),
+                  child: Image.asset(
+                    'assets/food1.jpeg',
+                    height: 100.0,
                   ),
                 ),
                 SizedBox(width: 5),
