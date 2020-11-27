@@ -19,6 +19,7 @@
 - [X] <s>Scanning of merchant QR code</s>
 - [ ] Scan dynamic user QR code
 - [ ] Home user interface
+- [ ] Deals UI
 
 ## 🔖 LICENCE
 [Apache-2.0](https://github.com/isaacdarcilla/flutter_merchants/blob/master/LICENSE)
